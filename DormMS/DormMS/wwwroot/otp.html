@@ -1,0 +1,86 @@
+﻿<!DOCTYPE html>
+
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Nhập OTP</title>
+</head>
+<body>
+
+    ```
+    <h2>Xác nhận OTP</h2>
+
+    <p id="emailText"></p>
+
+    <input type="text" id="otpInput" placeholder="Nhập OTP" />
+    <button onclick="verifyOtp()">Xác nhận</button>
+
+    <br><br>
+    <button onclick="resendOtp()">Gửi lại OTP</button>
+
+    <script>
+       
+        // ✅ Lấy email từ URL (?email=...)
+        const params = new URLSearchParams(window.location.search);
+        const isNew = params.get("newUser");
+
+        if (isNew === "true") {
+            alert("Tài khoản chưa tồn tại. Vui lòng xác nhận OTP để tạo tài khoản.");
+        }
+        const email = params.get("email");
+
+        if (!email) {
+            alert("Không có email!");
+            window.location.href = "/login.html";
+        }
+
+        document.getElementById("emailText").innerText =
+            "OTP đã gửi tới: " + email;
+
+        async function verifyOtp() {
+            const otp = document.getElementById("otpInput").value;
+
+            if (!otp) {
+                alert("Nhập OTP!");
+                return;
+            }
+
+            const res = await fetch('/api/auth/verify-otp', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: email,
+                    otp: otp
+                })
+            });
+
+            const json = await res.json();
+
+            if (res.ok) {
+                alert("Đăng nhập thành công!");
+
+                localStorage.setItem("token", json.token);
+                localStorage.setItem("fullName", json.fullName);
+
+                window.location.href = "/student.html";
+            } else {
+                alert(json.message || "OTP sai!");
+            }
+        }
+
+        async function resendOtp() {
+            await fetch('/api/auth/send-otp', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: email
+                })
+            });
+
+            alert("Đã gửi lại OTP!");
+        }
+    </script>
+   
+
+</body>
+</html>
