@@ -1,0 +1,311 @@
+﻿* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+.content {
+    flex: 1;
+}
+
+/* TOPBAR */
+.topbar {
+    height: 60px;
+    background: #f5f5f5;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    border-bottom: 1px solid #ddd;
+}
+
+.left-top {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: bold;
+}
+
+.right-menu {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.btn-login {
+    background: #f58220;
+    color: white;
+    padding: 8px 18px;
+    border-radius: 6px;
+    text-decoration: none;
+}
+
+.campus-btn {
+    background: #e3edf9;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 15px;
+}
+
+/* HERO */
+.hero {
+    height: 90vh;
+    background: url("ktx.jpg") center/cover no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-align: center;
+}
+
+    .hero h1 {
+        font-size: 40px;
+        border: 2px solid white;
+        padding: 10px 25px;
+        display: inline-block;
+    }
+
+/* LAYOUT */
+.layout {
+    display: flex;
+}
+
+/* SIDEBAR */
+.sidebar {
+    width: 288px;
+    background: #f8f9fa;
+    height: calc(100vh - 60px);
+    padding: 20px;
+    transition: 0.3s;
+}
+
+    .sidebar ul {
+        list-style: none;
+    }
+
+    .sidebar li {
+        padding: 12px;
+        cursor: pointer;
+        border-radius: 6px;
+    }
+
+        .sidebar li:hover,
+        .sidebar .active {
+            background: #f58220;
+            color: white;
+        }
+
+.logout-btn {
+    margin-top: 30px;
+    width: 100%;
+    padding: 10px;
+    background: #f58220;
+    color: white;
+    border: none;
+    border-radius: 6px;
+}
+
+
+
+/* CARD */
+.card {
+    margin-top: 20px;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* MENU BUTTON */
+.menu-btn {
+    font-size: 22px;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+/* ===== STUDENT BOARD ===== */
+
+.board-wrapper {
+    width: 100%;
+}
+
+.board-title {
+    font-size: 36px;
+    color: #1a4f95;
+    margin-bottom: 25px;
+}
+
+/* GRID LAYOUT */
+
+.board-grid {
+    display: flex;
+}
+
+/* LEFT BIG NEWS */
+
+.news-panel {
+    flex: 1;
+    max-width: 95%;
+    height: 475px;
+    font-size: 18px;
+    font-family: Arial, sans-serif;
+    background-color: #ffffff;
+    margin-left: 12px;
+}
+
+/* RIGHT SIDE */
+
+.student-side {
+    flex: 2;
+    display: flex;
+    max-width: 420px;
+    flex-direction: column;
+    gap: 21px;
+    margin-right: 20px;
+}
+
+/* HEADER */
+
+.panel-head1 {
+    background: #1a4f95;
+    color: white;
+    padding: 12px 18px;
+    width: 95%;
+    font-weight: bold;
+    border-radius: 10px 10px 0 0;
+}
+
+.panel-head2 {
+    background: #1a4f95;
+    color: white;
+    padding: 12px 18px;
+    max-width: 420px;
+    font-weight: bold;
+    border-radius: 10px 10px 0 0;
+}
+
+.panel-head3 {
+    background: #1a4f95;
+    color: white;
+    padding: 12px 18px;
+    max-width: 420px;
+    font-weight: bold;
+    border-radius: 10px 10px 0 0;
+}
+
+/* BODY */
+
+.panel-body1 {
+    background: white;
+    padding: 18px;
+    height: 391px;
+    width: 95%;
+    border-radius: 0 0 10px 10px;
+    border: 6px solid #e5e5e5;
+}
+
+.panel-body2 {
+    background: white;
+    padding: 18px;
+    max-width: 600px;
+    height: 182px;
+    border-radius: 0 0 10px 10px;
+    border: 6px solid #e5e5e5;
+}
+
+.panel-body3 {
+    background: white;
+    padding: 18px;
+    max-width: 600px;
+    height: 178px;
+    border-radius: 0 0 10px 10px;
+    border: 6px solid #e5e5e5;
+}
+
+
+/* NEWS */
+
+.news-row {
+    margin-bottom: 18px;
+}
+
+    .news-row h3 {
+        font-size: 15px;
+        color: #1a4f95;
+        margin-bottom: 3px;
+    }
+
+    .news-row p {
+        font-size: 12px;
+        color: #777;
+    }
+
+.more-link {
+    font-size: 13px;
+    color: #1a4f95;
+}
+
+/* PROFILE */
+
+.profile-layout {
+    display: flex;
+    gap: 15px;
+}
+
+.avatar-img {
+    width: 90px;
+    border-radius: 6px;
+}
+
+.profile-data h3 {
+    font-size: 16px;
+    color: #1a4f95;
+}
+
+.profile-data p {
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+/* CONTACT */
+
+.contact-card p {
+    font-size: 13px;
+    margin-bottom: 8px;
+}
+/*.sidebar.hide {
+    margin-left: -250px;
+}*/
+/* Sidebar mặc định */
+/*.sidebar {
+    width: 220px;
+    transition: 0.3s;
+}*/
+/* Khi thu gọn */
+/*.sidebar.collapsed {
+        width: 0;
+        padding: 0;
+        overflow: hidden;
+    }*/
+/* SIDEBAR */
+.sidebar {
+    width: 250px;
+    background: #f8f9fa;
+    height: calc(100vh - 60px);
+    padding: 20px;
+    transition: 0.3s;
+}
+
+    /* Khi thu gọn */
+    .sidebar.collapsed {
+        width: 0;
+        padding: 0;
+        overflow: hidden;
+    }

@@ -1,0 +1,48 @@
+﻿
+
+<!-- HomePage -->
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home - DormMS</title>
+    <link rel="stylesheet" href="/css/Home.css">
+
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>Chức năng</h2>
+        <div class="menu-item">🏠 Trang chủ</div>
+        <div class="menu-item">👤 Quản lý sinh viên</div>
+        <div class="menu-item">🏢 Quản lý phòng</div>
+        <div class="menu-item">📝 Đăng ký phòng</div>
+        <div class="menu-item">💡 Báo cáo sự cố</div>
+        <div class="menu-item">💸 Quản lý hoá đơn</div>
+        <div class="menu-item">⚙️ Cài đặt</div>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <div class="logo">DormMS</div>
+            <div id="headerIcon"></div>
+        </div>
+
+        <div style="padding: 20px; font-size: 22px;">
+            Chào mừng đến hệ thống quản lý ký túc xá 🎓
+        </div>
+
+        <div class="footer">
+            © 2024 DormMS - Hệ thống quản lý ký túc xá
+        </div>
+    </div>
+
+    <script>
+  fetch("https://cdn.jsdelivr.net/gh/devicons/devicon/icons/homebrew/homebrew-original.svg")
+    .then(r => r.text())
+    .then(svg => document.getElementById("headerIcon").innerHTML = svg);
+    </script>
+
+</body>
+</html>
