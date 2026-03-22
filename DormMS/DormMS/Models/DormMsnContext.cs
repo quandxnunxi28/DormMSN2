@@ -14,7 +14,7 @@ public partial class DormMsnContext : DbContext
         : base(options)
     {
     }
-
+    public virtual DbSet<BookingBed> BookingBeds { get; set; }
     public virtual DbSet<Allotment> Allotments { get; set; }
 
     public virtual DbSet<Complaint> Complaints { get; set; }
@@ -301,6 +301,36 @@ public partial class DormMsnContext : DbContext
             entity.HasOne(d => d.User).WithMany(p => p.Visitors)
                 .HasForeignKey(d => d.UserId)
                 .HasConstraintName("FK__visitors__user_i__619B8048");
+        });
+        modelBuilder.Entity<BookingBed>(entity =>
+        {
+            entity.HasKey(e => e.BookingId);
+
+            entity.ToTable("bookingbed");
+
+            entity.Property(e => e.BookingId)
+                .HasColumnName("booking_id");
+
+            entity.Property(e => e.UserId)
+                .HasColumnName("user_id");
+
+            entity.Property(e => e.RoomId)
+                .HasColumnName("room_id");
+
+            entity.Property(e => e.Status)
+                .HasMaxLength(50)
+                .IsUnicode(true)
+                .HasColumnName("status");
+
+            entity.Property(e => e.CreatedAt)
+                .HasColumnType("datetime")
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnName("created_at");
+
+            entity.Property(e => e.TotalAmount)      
+       .HasColumnType("decimal(18,2)")
+       .HasDefaultValue(0)
+       .HasColumnName("totalAmount");
         });
 
         OnModelCreatingPartial(modelBuilder);

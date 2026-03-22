@@ -1,0 +1,7 @@
+<Solution>
+  <Folder Name="/UI/">
+    <File Path="Home.html" />
+    <File Path="Login.html" />
+  </Folder>
+  <Project Path="DormMS/DormMS.csproj" />
+</Solution>

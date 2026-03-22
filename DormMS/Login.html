@@ -1,0 +1,128 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Đăng nhập & Đăng ký</title>
+    <link rel="stylesheet" href="/css/Login.css">
+</head>
+<body>
+
+    <div class="container" id="box">
+        <h2 id="title">Đăng nhập</h2>
+
+        <div id="form-login">
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="loginEmail" />
+            </div>
+            <div class="form-group">
+                <label>Mật khẩu</label>
+                <input type="password" id="loginPassword" />
+            </div>
+            <button onclick="login()">Đăng nhập</button>
+
+            <button class="google-btn" onclick="loginWithGoogle()">
+                <img class="icon" id="googleIcon" /> Đăng nhập bằng Google
+            </button>
+
+            <div class="link" onclick="showRegister()">Chưa có tài khoản? Đăng ký</div>
+            <div class="link" onclick="showForgot()">Quên mật khẩu?</div>
+        </div>
+
+        <div id="form-register" style="display:none;">
+            <div class="form-group">
+                <label>Họ tên</label>
+                <input type="text" id="regName" />
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="regEmail" />
+            </div>
+            <div class="form-group">
+                <label>Mật khẩu</label>
+                <input type="password" id="regPassword" />
+            </div>
+            <button onclick="register()">Đăng ký</button>
+
+            <div class="link" onclick="showLogin()">Đã có tài khoản? Đăng nhập</div>
+        </div>
+
+        <div id="form-forgot" style="display:none;">
+            <div class="form-group">
+                <label>Nhập email khôi phục</label>
+                <input type="email" id="forgotEmail" />
+            </div>
+            <button onclick="forgotPassword()">Gửi yêu cầu</button>
+            <div class="link" onclick="showLogin()">Quay lại đăng nhập</div>
+        </div>
+    </div>
+
+    <script>
+  // Load icon Google
+  fetch("https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg")
+    .then(res => res.text())
+    .then(svg => document.getElementById("googleIcon").src = "data:image/svg+xml;base64," + btoa(svg));
+
+  function showRegister(){
+    document.getElementById("title").innerText = "Đăng ký";
+    document.getElementById("form-login").style.display = "none";
+    document.getElementById("form-forgot").style.display = "none";
+    document.getElementById("form-register").style.display = "block";
+  }
+  function showLogin(){
+    document.getElementById("title").innerText = "Đăng nhập";
+    document.getElementById("form-login").style.display = "block";
+    document.getElementById("form-register").style.display = "none";
+    document.getElementById("form-forgot").style.display = "none";
+  }
+  function showForgot(){
+    document.getElementById("title").innerText = "Khôi phục mật khẩu";
+    document.getElementById("form-login").style.display = "none";
+    document.getElementById("form-register").style.display = "none";
+    document.getElementById("form-forgot").style.display = "block";
+  }
+
+  async function login(){
+    const data = {
+      email: loginEmail.value,
+      password: loginPassword.value
+    };
+
+    const res = await fetch('/api/auth/login', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+
+    const json = await res.json();
+    alert(JSON.stringify(json));
+  }
+
+  async function register(){
+    const data = {
+      username: regName.value,
+      email: regEmail.value,
+      password: regPassword.value
+    };
+
+    const res = await fetch('/api/auth/register', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+
+    const json = await res.json();
+    alert(JSON.stringify(json));
+  }
+
+  // Fake Google Login (bạn sẽ tích hợp OAuth thật sau)
+  function loginWithGoogle(){
+    alert("Google OAuth sẽ được tích hợp sau");
+  }
+
+  function forgotPassword(){
+    alert("Hệ thống gửi mail quên mật khẩu (cần server backend)");
+  }
+    </script>
+
+</body>
+</html>

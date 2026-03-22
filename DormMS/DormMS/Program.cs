@@ -1,8 +1,11 @@
 using DormMS.Models;
+using DormMS.Repository;
+using DormMS.Service;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,9 +15,17 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    });
 builder.Services.AddDbContext<DormMsnContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("MyCnn")));
+builder.Services.AddScoped<IBookingbedRepository, BookingbedRepository>();
+builder.Services.AddScoped<IBookingbedService, BookingbedService>();
+builder.Services.AddScoped<IPayOSService, PayOSService>();
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Services.AddAuthentication(options =>
@@ -43,9 +54,6 @@ builder.Services.AddAuthentication(options =>
 .AddCookie()
 .AddGoogle("Google", options =>
 {
-    //options.ClientId = "571075825521-ul26hlb2cc4g5i1vs3p3r21hgklabo8f.apps.googleusercontent.com";
-    //options.ClientSecret = "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";
-    //options.CallbackPath = "/signin-google";
     options.ClientId = builder.Configuration["Google:ClientId"];
     options.ClientSecret = builder.Configuration["Google:ClientSecret"];
     options.CallbackPath = "/signin-google";
@@ -64,10 +72,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.Use(async (context, next) =>
+{
+    context.Response.Headers.Add("ngrok-skip-browser-warning", "true");
+    await next();
+});
 app.UseHttpsRedirection();
 app.UseAuthentication();
-
+app.UseStaticFiles();
 app.UseAuthorization();
 
 app.MapControllers();

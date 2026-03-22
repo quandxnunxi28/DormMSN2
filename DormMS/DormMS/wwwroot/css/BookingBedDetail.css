@@ -1,0 +1,38 @@
+﻿.available-rooms {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    font-family: Arial, sans-serif;
+}
+
+    .available-rooms th, .available-rooms td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: center;
+    }
+
+    .available-rooms th {
+        background-color: #4CAF50;
+        color: white;
+    }
+
+    .available-rooms tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    .available-rooms tr:hover {
+        background-color: #ddd;
+    }
+
+    .available-rooms button {
+        background-color: #4CAF50;
+        color: white;
+        padding: 5px 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+        .available-rooms button:hover {
+            background-color: #45a049;
+        }

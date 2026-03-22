@@ -1,0 +1,157 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bookings List</title>
+        <link rel="stylesheet" href="/css/Home.css">
+        <link rel="stylesheet" href="/css/BookingBed.css">
+
+</head>
+<body>
+
+    <!-- TOPBAR (GIỮ NGUYÊN) -->
+    <header class="topbar">
+        <div class="left-top">
+            <button id="toggleBtn" class="menu-btn">☰</button>
+            <div class="logo">
+                <img src="logo.png" height="35">
+                <span>On campus Dormitory</span>
+            </div>
+        </div>
+
+        <div class="right-menu">
+            <button class="campus-btn">Hòa Lạc</button>
+        </div>
+    </header>
+
+    <div class="layout">
+
+        <!-- SIDEBAR (GIỮ NGUYÊN) -->
+        <aside id="sidebar" class="sidebar">
+            <ul>
+                <li>🏠 Home</li>
+                <li>📰 News</li>
+                <li>🛏 Room history</li>
+                <li class="active"><a href="BookingBed.html">📅 Bookings</a></li>
+                <li>💡 Electricity water</li>
+                <li>💳 Payment history</li>
+                <li>📩 My request</li>
+                <li>🚗 Parking ticket</li>
+                <li>📘 User guide</li>
+                <li>❓ FAQ</li>
+            </ul>
+
+            <button class="logout-btn">Đăng xuất</button>
+        </aside>
+
+        <!-- CONTENT (ĐÃ THAY) -->
+        <main id="content" class="content">
+
+            <div class="booking-wrapper">
+
+                <h1 class="booking-title">Bookings List</h1>
+
+                <div class="booking-note">
+                    Please double check your booking information below. <br>
+                    (Vui lòng kiểm tra lại chính xác thông tin đặt phòng dưới đây.)
+                </div>
+
+                <div class="booking-table-box">
+
+                    <table class="booking-table">
+                        <thead>
+                            <tr>
+                                <th>Dom</th>
+                                <th>Bed</th>
+                                <th>Room Type</th>
+                                <th>Created Date</th>
+                                <th>Status</th>
+                                <th>Note</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bookingBody">
+                        </tbody>
+                    </table>
+                    <div id="bookingAction" class="booking-action"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="/js/app.js"></script>
+    <script>
+        function getUserIdFromToken() {
+            const token = localStorage.getItem("token");
+            console.log(token);
+
+            if (!token) {
+                alert("token bị null");
+            }
+
+            // Decode payload của JWT
+            const payload = JSON.parse(atob(token.split('.')[1]));
+           
+            const userId = payload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
+            return userId || null;
+        }
+    </script>
+    <script>
+
+        async function loadBookings() {
+            const userId = getUserIdFromToken(); // tạm test, sau này lấy từ login/JWT
+            if (!userId) {
+                alert("Chưa có userId hợp lệ từ token! Vui lòng đăng nhập lại.");
+                console.error("Chưa có userId hợp lệ từ token!");
+                return; // Không gọi API nếu undefined
+            }
+            try {
+                const res = await fetch(`/api/bookingbed/student/${userId}`);
+                const actionDiv = document.getElementById("bookingAction");
+                actionDiv.innerHTML = ""; // reset action button
+                if (!res.ok) {
+                    console.log("Không có dữ liệu");
+                    actionDiv.innerHTML = `
+        <button class="book-now-btn" onclick="window.location.href='BookingBedDetail.html'">
+            Đặt phòng ngay
+        </button>
+    `;
+                    return;
+                }
+
+                const data = await res.json(); // JSON trả về là 1 object
+
+                const tbody = document.getElementById("bookingBody");
+                tbody.innerHTML = ""; // reset table
+
+                // Tạo 1 row từ object data
+                const row = `
+                        <tr class="active-row">
+                            <td>${data.room?.hostel?.name || ""}</td>        <!-- Dom -->
+                            <td>${data.room?.roomNumber || ""}</td>          <!-- Bed -->
+                            <td>SVVN - 4 beds - 1.050.000</td>               <!-- Room Type -->
+                            <td>${formatDate(data.allotDate)}</td>          <!-- Created Date -->
+                            <td class="status accepted">${data.status}</td> <!-- Status -->
+                            <td></td>                                       <!-- Note -->
+                        </tr>
+                        `;
+
+                tbody.innerHTML = row;
+
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        // Chỉ hiển thị ngày/tháng/năm
+        function formatDate(dateStr) {
+            if (!dateStr) return "";
+            const d = new Date(dateStr);
+            return d.toLocaleDateString("vi-VN");
+        }
+
+        loadBookings();
+    </script>
+
+
+    
+</body>
+</html>
