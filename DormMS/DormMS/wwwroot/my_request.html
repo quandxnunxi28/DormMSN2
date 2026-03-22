@@ -1,0 +1,614 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>My Request</title>
+    <link rel="stylesheet" href="/css/Home.css">
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .content {
+            flex: 1;
+            padding: 36px 40px;
+            background: #f4f6f9;
+            font-family: 'Be Vietnam Pro', sans-serif;
+        }
+
+        .page-header {
+            margin-bottom: 28px;
+        }
+
+            .page-header h1 {
+                font-size: 28px;
+                font-weight: 700;
+                color: #1a2340;
+                letter-spacing: -0.5px;
+            }
+
+            .page-header p {
+                font-size: 13px;
+                color: #9aa1b1;
+                margin-top: 4px;
+            }
+
+        .top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        /* Filter */
+        .filter-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .filter-btn {
+            padding: 7px 16px;
+            border-radius: 20px;
+            border: 1px solid #e5e7eb;
+            background: #fff;
+            font-size: 13px;
+            font-weight: 600;
+            color: #6b7280;
+            cursor: pointer;
+            font-family: 'Be Vietnam Pro', sans-serif;
+            transition: all 0.15s;
+        }
+
+            .filter-btn:hover {
+                border-color: #1e4db7;
+                color: #1e4db7;
+            }
+
+            .filter-btn.active {
+                background: #1e4db7;
+                color: #fff;
+                border-color: #1e4db7;
+            }
+
+            .filter-btn.active-pending {
+                background: #ea580c;
+                color: #fff;
+                border-color: #ea580c;
+            }
+
+            .filter-btn.active-resolved {
+                background: #16a34a;
+                color: #fff;
+                border-color: #16a34a;
+            }
+
+        /* Add button */
+        .btn-add {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #1e4db7;
+            color: #fff;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 8px 18px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: background 0.15s;
+            font-family: 'Be Vietnam Pro', sans-serif;
+        }
+
+            .btn-add:hover {
+                background: #1a3f9e;
+            }
+
+        /* Table */
+        .table-wrap {
+            background: #fff;
+            border-radius: 14px;
+            border: 1px solid #eaecf0;
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        thead tr {
+            background: #f8fafc;
+            border-bottom: 1px solid #eaecf0;
+        }
+
+        thead th {
+            padding: 14px 20px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 700;
+            color: #6b7280;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #f3f4f6;
+            transition: background 0.15s;
+        }
+
+            tbody tr:last-child {
+                border-bottom: none;
+            }
+
+            tbody tr:hover {
+                background: #f8fafc;
+            }
+
+        tbody td {
+            padding: 14px 20px;
+            color: #374151;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .badge-pending {
+            background: #ffedd5;
+            color: #ea580c;
+        }
+
+        .badge-resolved {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #9aa1b1;
+        }
+
+            .empty-state .icon {
+                font-size: 40px;
+                margin-bottom: 12px;
+            }
+
+            .empty-state p {
+                font-size: 14px;
+            }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 20px;
+        }
+
+        .page-btn {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            background: #fff;
+            font-size: 13px;
+            font-weight: 600;
+            color: #374151;
+            cursor: pointer;
+            font-family: 'Be Vietnam Pro', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+        }
+
+            .page-btn:hover:not(:disabled) {
+                border-color: #1e4db7;
+                color: #1e4db7;
+            }
+
+            .page-btn.active {
+                background: #1e4db7;
+                color: #fff;
+                border-color: #1e4db7;
+            }
+
+            .page-btn:disabled {
+                opacity: 0.4;
+                cursor: not-allowed;
+            }
+
+        .page-info {
+            font-size: 13px;
+            color: #9aa1b1;
+            margin: 0 6px;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.4);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+            .modal-overlay.open {
+                display: flex;
+            }
+
+        .modal {
+            background: #fff;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 540px;
+            padding: 32px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            font-family: 'Be Vietnam Pro', sans-serif;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a2340;
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+            .form-group label {
+                display: block;
+                font-size: 13px;
+                font-weight: 600;
+                color: #374151;
+                margin-bottom: 6px;
+            }
+
+            .form-group select, .form-group textarea {
+                width: 100%;
+                padding: 10px 14px;
+                border: 1px solid #e5e7eb;
+                border-radius: 8px;
+                font-size: 14px;
+                color: #1a2340;
+                font-family: 'Be Vietnam Pro', sans-serif;
+                outline: none;
+                transition: border-color 0.15s;
+                box-sizing: border-box;
+            }
+
+                .form-group select:focus, .form-group textarea:focus {
+                    border-color: #1e4db7;
+                }
+
+            .form-group textarea {
+                min-height: 100px;
+                resize: vertical;
+            }
+
+                .form-group select.error, .form-group textarea.error {
+                    border-color: #dc2626 !important;
+                }
+
+        .field-error {
+            font-size: 12px;
+            color: #dc2626;
+            margin-top: 5px;
+            display: none;
+        }
+
+            .field-error.show {
+                display: block;
+            }
+
+        .char-counter {
+            font-size: 11px;
+            color: #9aa1b1;
+            text-align: right;
+            margin-top: 4px;
+        }
+
+            .char-counter.warn {
+                color: #ea580c;
+            }
+
+            .char-counter.over {
+                color: #dc2626;
+                font-weight: 600;
+            }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .btn-cancel {
+            padding: 9px 20px;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            background: #fff;
+            color: #374151;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Be Vietnam Pro', sans-serif;
+        }
+
+            .btn-cancel:hover {
+                background: #f9fafb;
+            }
+
+        .btn-submit {
+            padding: 9px 20px;
+            border-radius: 8px;
+            border: none;
+            background: #1e4db7;
+            color: #fff;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Be Vietnam Pro', sans-serif;
+            transition: background 0.15s;
+        }
+
+            .btn-submit:hover {
+                background: #1a3f9e;
+            }
+
+            .btn-submit:disabled {
+                background: #93aee8;
+                cursor: not-allowed;
+            }
+    </style>
+</head>
+<body>
+    <header class="topbar">
+        <div class="left-top">
+            <button id="toggleBtn" class="menu-btn">☰</button>
+            <div class="logo">
+                <img src="logo.png" height="35">
+                <span>On campus Dormitory</span>
+            </div>
+        </div>
+        <div class="right-menu">
+            <button class="campus-btn">Hòa Lạc</button>
+        </div>
+    </header>
+
+    <div class="layout">
+        <aside id="sidebar" class="sidebar">
+            <ul>
+                <li>🏠 Home</li>
+                <li>📰 News</li>
+                <li>🛏 Room history</li>
+                <li>📅 Bookings</li>
+                <li>💡 Electricity water</li>
+                <li>💳 Payment history</li>
+                <li class="active">📩 My request</li>
+                <li>🚗 Parking ticket</li>
+                <li>📘 User guide</li>
+                <li>❓ FAQ</li>
+            </ul>
+            <button class="logout-btn">Đăng xuất</button>
+        </aside>
+
+        <main id="content" class="content">
+            <div class="page-header">
+                <h1>Yêu cầu của tôi</h1>
+                <p>Danh sách các yêu cầu bạn đã gửi</p>
+            </div>
+
+            <div class="top-bar">
+                <div class="filter-bar">
+                    <button class="filter-btn active" onclick="setFilter('')">Tất cả</button>
+                    <button class="filter-btn" onclick="setFilter('Pending')">Chờ xử lý</button>
+                    <button class="filter-btn" onclick="setFilter('Resolved')">Đã xử lý</button>
+                </div>
+                <button class="btn-add" onclick="openCreateModal()">+ Tạo yêu cầu mới</button>
+            </div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Loại sự cố</th>
+                            <th>Mô tả</th>
+                            <th>Phòng</th>
+                            <th>Ngày gửi</th>
+                            <th>Trạng thái</th>
+                        </tr>
+                    </thead>
+                    <tbody id="complaint-list">
+                        <!-- JS render vào đây -->
+                    </tbody>
+                </table>
+                <div class="pagination" id="pagination"></div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal Tạo yêu cầu -->
+    <div class="modal-overlay" id="createModal">
+        <div class="modal">
+            <div class="modal-title">📩 Tạo yêu cầu mới</div>
+            <div class="form-group">
+                <label>Loại sự cố <span style="color:#ef4444">*</span></label>
+                <select id="inp-issue">
+                    <option value="">-- Chọn loại sự cố --</option>
+                    <option value="Sự cố điện">Sự cố điện</option>
+                    <option value="Sự cố nước">Sự cố nước</option>
+                    <option value="Hỏng hóc thiết bị">Hỏng hóc thiết bị</option>
+                    <option value="Vệ sinh">Vệ sinh</option>
+                    <option value="An ninh">An ninh</option>
+                    <option value="Tiếng ồn">Tiếng ồn</option>
+                    <option value="Điều hòa/quạt">Điều hòa/quạt</option>
+                </select>
+                <div class="field-error" id="err-issue"> Vui lòng chọn loại sự cố</div>
+            </div>
+            <div class="form-group">
+                <label>Mô tả <span style="color:#ef4444">*</span></label>
+                <textarea id="inp-description" maxlength="500" placeholder="Mô tả chi tiết sự cố..." oninput="updateCounter('inp-description', 'inp-counter')"></textarea>
+                <div class="char-counter" id="inp-counter">0 / 500</div>
+                <div class="field-error" id="err-description"> Mô tả không được để trống</div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeCreateModal()">Hủy</button>
+                <button class="btn-submit" id="btn-create" onclick="submitCreate()">Gửi yêu cầu</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/app.js"></script>
+    <script>
+        let currentPage = 1;
+        let currentStatus = '';
+        // TODO: Implement các hàm sau
+        // setFilter(status)
+        function setFilter(status) {
+            currentStatus = status;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.className = 'filter-btn');
+            const btns = document.querySelectorAll('.filter-btn');
+            if (status === '') btns[0].className = 'filter-btn active';
+            if (status === 'Pending') btns[1].className = 'filter-btn active-pending';
+            if (status === 'Resolved') btns[2].className = 'filter-btn active-resolved';
+
+            loadComplaints(1);
+        }
+        // loadComplaints(page)
+        function loadComplaints(page) {
+            currentPage = page;
+            const params = new URLSearchParams({ page, pageSize: 10 });
+            if (currentStatus) params.append('status', currentStatus);
+            fetch('/api/request?' + params, { headers: authHeaders() })
+                .then(res => res.json())
+                .then(res => {
+                    renderTable(res.data);
+                    renderPagination(res.currentPage, res.totalPages);
+                })
+                .catch(err => console.error(err));
+        }
+
+        function renderTable(data) {
+            const tbody = document.getElementById('complaint-list');
+            if (!data || !data.length) {
+                tbody.innerHTML = `
+            <tr><td colspan="5">
+                <div class="empty-state">
+                <div class="icon">📩</div>
+                <p>Chưa có yêu cầu nào.</p>
+                </div>
+            </td></tr>`;
+                return;
+            }
+            tbody.innerHTML = data.map(item => `
+        <tr>
+            <td>${item.issue}</td>
+            <td>${item.description ?? '--'}</td>
+            <td>${item.roomNumber ?? '--'}</td>
+            <td>${formatDate(item.dateFiled)}</td>
+            <td><span class="badge ${item.status === 'Resolved' ? 'badge-resolved' : 'badge-pending'}">
+                ${item.status === 'Resolved' ? 'Đã xử lý' : 'Chờ xử lý'}
+            </span></td>
+        </tr>`).join('');
+        }
+
+        function renderPagination(current, total) {
+            const el = document.getElementById('pagination');
+            if (total <= 1) { el.innerHTML = ''; return; }
+
+            let html = `<button class="page-btn" onclick="loadComplaints(${current - 1})" ${current === 1 ? 'disabled' : ''}>‹</button>`;
+            for (let i = 1; i <= total; i++) {
+                if (total > 7 && i > 2 && i < total - 1 && Math.abs(i - current) > 1) {
+                    if (i === 3 || i === total - 2) html += `<span class="page-info">...</span>`;
+                    continue;
+                }
+                html += `<button class="page-btn ${i === current ? 'active' : ''}" onclick="loadComplaints(${i})">${i}</button>`;
+            }
+            html += `<button class="page-btn" onclick="loadComplaints(${current + 1})" ${current === total ? 'disabled' : ''}>›</button>`;
+            el.innerHTML = html;
+        }
+        function openCreateModal() {
+            document.getElementById('inp-issue').value = '';
+            document.getElementById('inp-description').value = '';
+            updateCounter('inp-description', 'inp-counter');
+            clearErrors(['inp-issue', 'inp-description']);
+            document.getElementById('createModal').classList.add('open');
+        }
+
+        function closeCreateModal() {
+            document.getElementById('createModal').classList.remove('open');
+        }
+
+        function updateCounter(textareaId, counterId) {
+            const len = document.getElementById(textareaId).value.length;
+            const el = document.getElementById(counterId);
+            el.textContent = len + ' / 500';
+            el.className = 'char-counter' + (len >= 500 ? ' over' : len >= 400 ? ' warn' : '');
+        }
+        function clearErrors(ids) {
+            ids.forEach(id => {
+                document.getElementById(id).classList.remove('error');
+            });
+            document.querySelectorAll('.field-error').forEach(el => el.classList.remove('show'));
+        }
+
+        function showError(inputId, errorId) {
+            document.getElementById(inputId).classList.add('error');
+            document.getElementById(errorId).classList.add('show');
+        }
+        function submitCreate() {
+            const issueEl = document.getElementById('inp-issue');
+            const descriptionEl = document.getElementById('inp-description');
+            const issue = issueEl.value.trim();
+            const description = descriptionEl.value.trim();
+
+            clearErrors(['inp-issue', 'inp-description']);
+            let valid = true;
+            if (!issue) { showError('inp-issue', 'err-issue'); valid = false; }
+            if (!description) { showError('inp-description', 'err-description'); valid = false; }
+            if (!valid) return;
+            const btn = document.getElementById('btn-create');
+            btn.disabled = true; btn.textContent = 'Đang lưu...';
+            fetch('/api/request', {
+                method: 'POST',
+                headers: authHeaders(),
+                body: JSON.stringify({
+                    issue: document.getElementById('inp-issue').value.trim(),
+                    description: document.getElementById('inp-description').value.trim()
+                })
+            })
+                .then(res => {
+                    if (!res.ok) throw new Error(); closeCreateModal();
+                    loadComplaints(1);
+                })
+                .catch(() => alert('Có lỗi xảy ra, vui lòng thử lại!'))
+                .finally(() => { btn.disabled = false; btn.textContent = 'Tạo yêu cầu'; });
+        }
+
+        document.getElementById('createModal').addEventListener('click', function(e) {
+            if (e.target === this) closeCreateModal();
+        });
+        function authHeaders() {
+            return {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+            };
+        }
+        function formatDate(date) {
+            if (!date) return '--';
+            return new Date(date).toLocaleDateString('vi-VN');
+        }
+        document.addEventListener("DOMContentLoaded", () => loadComplaints(1));
+    </script>
+</body>
+</html>

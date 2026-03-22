@@ -18,6 +18,7 @@ public partial class Complaint
     public string? Status { get; set; }
 
     public virtual Room? Room { get; set; }
+    public string Description { get; set; }
 
     public virtual HostelUser? User { get; set; }
 }

@@ -14,7 +14,7 @@ public partial class DormMsnContext : DbContext
         : base(options)
     {
     }
-    public virtual DbSet<BookingBed> BookingBeds { get; set; }
+    public virtual DbSet<News> News { get; set; }
     public virtual DbSet<Allotment> Allotments { get; set; }
 
     public virtual DbSet<Complaint> Complaints { get; set; }
@@ -88,13 +88,16 @@ public partial class DormMsnContext : DbContext
             entity.Property(e => e.ComplaintId).HasColumnName("complaint_id");
             entity.Property(e => e.DateFiled).HasColumnName("date_filed");
             entity.Property(e => e.Issue)
-                .HasColumnType("text")
+                .HasMaxLength(100)
                 .HasColumnName("issue");
             entity.Property(e => e.RoomId).HasColumnName("room_id");
             entity.Property(e => e.Status)
                 .HasMaxLength(20)
                 .IsUnicode(false)
                 .HasColumnName("status");
+            entity.Property(e => e.Description) 
+                .HasMaxLength(500)
+                .HasColumnName("description");
             entity.Property(e => e.UserId).HasColumnName("user_id");
 
             entity.HasOne(d => d.Room).WithMany(p => p.Complaints)
@@ -231,7 +234,9 @@ public partial class DormMsnContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("status");
             entity.Property(e => e.UserId).HasColumnName("user_id");
-
+            entity.Property(e => e.Description)
+                .HasMaxLength(200)
+                .HasColumnName("description");
             entity.HasOne(d => d.User).WithMany(p => p.Payments)
                 .HasForeignKey(d => d.UserId)
                 .HasConstraintName("FK__payment__user_id__60A75C0F");
@@ -302,36 +307,27 @@ public partial class DormMsnContext : DbContext
                 .HasForeignKey(d => d.UserId)
                 .HasConstraintName("FK__visitors__user_i__619B8048");
         });
-        modelBuilder.Entity<BookingBed>(entity =>
+        modelBuilder.Entity<News>(entity =>
         {
-            entity.HasKey(e => e.BookingId);
+            entity.ToTable("news");
 
-            entity.ToTable("bookingbed");
+            entity.HasKey(e => e.NewsId);
 
-            entity.Property(e => e.BookingId)
-                .HasColumnName("booking_id");
+            entity.Property(e => e.NewsId).HasColumnName("news_id");
+            entity.Property(e => e.Title).HasColumnName("title");
+            entity.Property(e => e.Content).HasColumnName("content");
+            entity.Property(e => e.Summary).HasColumnName("summary");
+            entity.Property(e => e.Type).HasColumnName("type");
+            entity.Property(e => e.Status).HasColumnName("status");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.CreatedDate).HasColumnName("created_date");
+            entity.Property(e => e.IsImportant).HasColumnName("is_important");
 
-            entity.Property(e => e.UserId)
-                .HasColumnName("user_id");
-
-            entity.Property(e => e.RoomId)
-                .HasColumnName("room_id");
-
-            entity.Property(e => e.Status)
-                .HasMaxLength(50)
-                .IsUnicode(true)
-                .HasColumnName("status");
-
-            entity.Property(e => e.CreatedAt)
-                .HasColumnType("datetime")
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnName("created_at");
-
-            entity.Property(e => e.TotalAmount)      
-       .HasColumnType("decimal(18,2)")
-       .HasDefaultValue(0)
-       .HasColumnName("totalAmount");
+            entity.HasOne<HostelUser>()
+                .WithMany()
+                .HasForeignKey(e => e.CreatedBy);
         });
+
 
         OnModelCreatingPartial(modelBuilder);
     }
