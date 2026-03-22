@@ -1,14 +1,14 @@
-﻿using DormMS.Models;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using DormMS.Models;
 using DormMS.Service;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Org.BouncyCastle.Ocsp;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 
 namespace DormMS.Controllers
 {
@@ -192,7 +192,9 @@ namespace DormMS.Controllers
                 .Include(x => x.RoleNavigation)
                 .FirstOrDefault(x => x.Email == email);
 
-            
+            // ===============================
+            // ❌ CHƯA CÓ USER → gửi OTP
+            // ===============================
             if (user == null)
             {
                 var otp = new Random().Next(100000, 999999).ToString();
@@ -211,11 +213,15 @@ namespace DormMS.Controllers
                 };
                 _context.HostelUsers.Add(userr);
                 _context.SaveChanges();
-                
+                // 👉 chuyển sang OTP page
                 return Redirect($"/otp.html?email={email}&newUser=true");
             }
 
+            // ===============================
+            // ✅ ĐÃ CÓ USER → LOGIN LUÔN
+            // ===============================
             var token = GenerateJwt(user);
+
             return Redirect($"/student.html?token={token}&role={user.RoleNavigation.RoleName}");
         }
 
@@ -227,7 +233,7 @@ namespace DormMS.Controllers
             return Ok(new { message = "Đăng xuất thành công" });
         }
 
-
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Authorize]
         [HttpGet("me")]
         public IActionResult GetMe()
@@ -244,31 +250,30 @@ namespace DormMS.Controllers
             if (user == null)
                 return NotFound();
 
-                return Ok(new
-                {
-                    name = user.Name,
-                    email = user.Email,
-                    phone = user.Phone,
-                    gender = user.Gender,
-                    dob = user.Dob,
-                    role = user.Role,
-                    balance = 0
-                });
+            return Ok(new
+            {
+                name = user.Name,
+                email = user.Email,
+                phone = user.Phone,
+                gender = user.Gender,
+                dob = user.Dob,
+                role = user.Role,
+                balance = 0
+            });
         }
 
         private string GenerateJwt(HostelUser user)
         {
             var claims = new[]
             {
-            new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
-            new Claim(ClaimTypes.Name, user.Username),
-            new Claim(ClaimTypes.Role, user.RoleNavigation.RoleName),
-            
-        };
-
+                new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
+                new Claim(ClaimTypes.Name, user.Username),
+                new Claim(ClaimTypes.Role, user.RoleNavigation.RoleName),
+              
+             };
             var key = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(_config["Jwt:Key"])
-            );  
+                );
 
             var token = new JwtSecurityToken(
                 claims: claims,

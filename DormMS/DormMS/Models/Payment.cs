@@ -16,6 +16,7 @@ public partial class Payment
     public string? Method { get; set; }
 
     public string? Status { get; set; }
+    public string? Description { get; set; }
 
     public virtual HostelUser? User { get; set; }
 }
