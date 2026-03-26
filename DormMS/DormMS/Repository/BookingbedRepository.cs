@@ -23,11 +23,11 @@ namespace DormMS.Repository
             return bookingbedExist;
         }
 
-        public async Task<Allotment> GetStudentBookingbeds(int id)
-        {
-            var bookingbedStudent =await _context.Allotments.Include(a => a.User)
-        .Include(a => a.Room).ThenInclude(r => r.Hostel).FirstOrDefaultAsync(a => a.UserId == id);
-            return bookingbedStudent;
-        }
+            public async Task<Allotment> GetStudentBookingbeds(int id)
+            {
+                var bookingbedStudent =await _context.Allotments.Include(a => a.User)
+            .Include(a => a.Room).ThenInclude(r => r.Hostel).FirstOrDefaultAsync(a => a.UserId == id);
+                return bookingbedStudent;
+            }
     }
 }

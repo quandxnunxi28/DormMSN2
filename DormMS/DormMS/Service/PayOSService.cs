@@ -28,8 +28,8 @@ namespace DormMS.Service
                 OrderCode = bookingId,               // BookingId làm OrderCode
                 Amount = (int)totalAmount,          // PayOS nhận số nguyên (VND)
                 Description = $"Booking_{bookingId}",
-                ReturnUrl = "https://braylee-irresistible-alyce.ngrok-free.dev/payment-success.html", // thanh toán thành công
-                CancelUrl = "https://braylee-irresistible-alyce.ngrok-free.dev/payment-cancelled.html"   // hủy
+                ReturnUrl = "https://localhost:7088/payment-success.html", // thanh toán thành công
+                CancelUrl = "https://localhost:7088/payment-cancelled.html"   // hủy
             };
 
             return await _client.PaymentRequests.CreateAsync(request);

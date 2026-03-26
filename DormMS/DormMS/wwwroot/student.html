@@ -29,7 +29,7 @@
             <ul>
                 <li class="active">🏠 Home</li>
                 <li>📰 News</li>
-                <li>🛏 Room history</li>
+                <li class="active"><a href="BookingHistory.html">🛏 Booking history</a></li>
                 <li class="active"><a href="BookingBed.html">📅 Bookings</a></li>
                 <li>💡 Electricity water</li>
                 <li>💳 Payment history</li>
@@ -117,7 +117,11 @@
                             </div>
 
                         </div>
-
+                        <div>
+                            <button id="adminBtn" style="display:none;" onclick="goAdmin()">
+                                ⚙️ Quản lý hết hạn
+                            </button>
+                        </div>
                     </div>
 
                 </div>
@@ -131,6 +135,7 @@
 
     </script>
     <script>
+
         // ✅ lấy token từ URL nếu có
         const params = new URLSearchParams(window.location.search);
         const tokenFromUrl = params.get("token");
@@ -138,6 +143,24 @@
         if (tokenFromUrl) {
             localStorage.setItem("token", tokenFromUrl);
             window.history.replaceState({}, document.title, "/student.html");
+        }
+
+        //hiển thị button quản lý   
+        const role = getRoleFromToken();
+
+        if (role === "Admin") {
+            document.getElementById("adminBtn").style.display = "block";
+        }
+        function goAdmin() {
+            window.location.href = "/admin-expired.html";
+        }
+        function getRoleFromToken() {
+            const token = localStorage.getItem("token");
+            
+            if (!token) return null;
+
+            const payload = JSON.parse(atob(token.split('.')[1]));
+            return payload["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
         }
         async function loadProfile() {
             const token = localStorage.getItem("token");

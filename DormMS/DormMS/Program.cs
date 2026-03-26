@@ -28,6 +28,16 @@ builder.Services.AddScoped<IBookingbedService, BookingbedService>();
 builder.Services.AddScoped<IPayOSService, PayOSService>();
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
+
+
+
+
+
+
+
+
+
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

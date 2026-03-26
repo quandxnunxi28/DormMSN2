@@ -119,14 +119,44 @@
         tbody.innerHTML = "<tr><td colspan='7'>Lỗi khi tải dữ liệu phòng.</td></tr>";
     }
 }
+        function getUserIdFromToken() {
+            const token = localStorage.getItem("token");
+            console.log(token);
 
+            if (!token) {
+                alert("token bị null");
+            }
+
+            // Decode payload của JWT
+            const payload = JSON.parse(atob(token.split('.')[1]));
+
+            const userId = payload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
+            return userId || null;
+        }
         async function chooseRoom(roomId, roomNumber, available) {
+            const userId = getUserIdFromToken();
             if (available <= 0) {
                 alert("Phòng này đã đầy!");
                 return;
             }
+            try {
+                const checkRes = await fetch(`/api/bookingbed/bookingbede/${userId}`, {
+                    method: "POST"
+                });
 
-            const userId = localStorage.getItem("userId") || 11; // giả lập
+                const checkData = await checkRes.json();
+
+                if (checkData.exists) {
+                    alert("❌ Bạn đã đặt phòng rồi! Mỗi sinh viên chỉ được đặt 1 lần.");
+                    return;
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Lỗi khi kiểm tra booking!");
+                return;
+            }
+
+             // giả lập
             const price = prompt(`Nhập giá phòng cho ${roomNumber}:`, "1000000");
 
             if (!price) return;
