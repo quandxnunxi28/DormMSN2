@@ -1,0 +1,316 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bookings List</title>
+    <link rel="stylesheet" href="/css/Home.css">
+    <link rel="stylesheet" href="/css/BookingBed.css">
+
+</head>
+<body>
+
+    <!-- TOPBAR (GIỮ NGUYÊN) -->
+    <header class="topbar">
+        <div class="left-top">
+            <button id="toggleBtn" class="menu-btn">☰</button>
+            <div class="logo">
+                <img src="logo.png" height="35">
+                <span>On campus Dormitory</span>
+            </div>
+        </div>
+
+        <div class="right-menu">
+            <button class="campus-btn">Hòa Lạc</button>
+        </div>
+    </header>
+
+    <div class="layout">
+
+        <!-- SIDEBAR (GIỮ NGUYÊN) -->
+        <aside id="sidebar" class="sidebar">
+            <ul>
+                <li>🏠 Home</li>
+                <li>📰 News</li>
+                <li>🛏 Room history</li>
+                <li><a href="BookingBed.html">📅 Bookings</a></li>
+                <li>💡 Electricity water</li>
+                <li>💳 Payment history</li>
+                <li>📩 My request</li>
+                <li>🚗 Parking ticket</li>
+                <li>📘 User guide</li>
+                <li>❓ FAQ</li>
+            </ul>
+
+            <button class="logout-btn">Đăng xuất</button>
+        </aside>
+
+        <!-- CONTENT (ĐÃ THAY) -->
+        <main id="content" class="content">
+
+            <div class="booking-wrapper">
+
+                <h1 class="booking-title">Bookings List</h1>
+
+                <div class="booking-note">
+                    Please double check your booking information below. <br>
+                    (Vui lòng kiểm tra lại chính xác thông tin đặt phòng dưới đây.)
+                </div>
+
+                <div class="booking-table-box">
+
+                    <table class="booking-table">
+                        <thead>
+                            <tr>
+                                <th>Dom</th>
+                                <th>Bed</th>
+                                <th>Room Type</th>
+                                <th>Created Date</th>
+                                <th>Status</th>
+                                <th>Note</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bookingBody">
+                        </tbody>
+                    </table>
+                    <div id="bookingAction" class="booking-action"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="/js/app.js"></script>
+    <script>
+        function getUserIdFromToken() {
+            const token = localStorage.getItem("token");
+            console.log(token);
+
+            if (!token) {
+                alert("token bị null");
+            }
+
+            // Decode payload của JWT
+            const payload = JSON.parse(atob(token.split('.')[1]));
+
+            const userId = payload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
+            return userId || null;
+        }
+    </script>
+    <script>
+        async function loadBookingPhase(userId) {
+            try {
+                const res = await fetch(`/api/bookingbed/check-booking-phase/${userId}`);
+                if (!res.ok) return null;
+
+                return await res.json();
+            } catch (err) {
+                console.error("Lỗi load phase:", err);
+                return null;
+            }
+        }
+        async function loadBookings() {
+            const userId = getUserIdFromToken();
+
+            if (!userId) {
+                alert("Chưa đăng nhập!");
+                return;
+            }
+
+            const actionDiv = document.getElementById("bookingAction");
+            const tbody = document.getElementById("bookingBody");
+
+            actionDiv.innerHTML = "";
+            tbody.innerHTML = "";
+
+            try {
+                // 🔥 GỌI 2 API SONG SONG
+                const [bookingRes, phaseData] = await Promise.all([
+                    fetch(`/api/bookingbed/student/${userId}`),
+                    
+                    loadBookingPhase(userId)
+                ]);
+
+                // ========================
+                // 🟢 1. HIỂN THỊ BOOKING
+                // ========================
+                if (bookingRes.ok) {
+                    const data = await bookingRes.json();
+
+                    const row = `
+                    <tr class="active-row">
+                        <td>${data.room?.hostel?.name || ""}</td>
+                        <td>${data.room?.roomNumber || ""}</td>
+                        <td>SVVN - 4 beds - 1.050.000</td>
+                        <td>${formatDate(data.allotDate)}</td>
+                        <td class="status accepted">${data.status}</td>
+                        <td></td>
+                    </tr>
+                `;
+
+                    tbody.innerHTML = row;
+                } else {
+                    tbody.innerHTML = `<tr><td colspan="6">Chưa có dữ liệu</td></tr>`;
+                }
+
+                // ========================
+                // 🔵 2. HIỂN THỊ BUTTON THEO PHASE
+                // ========================
+                if (!phaseData) {
+                    actionDiv.innerHTML = `
+                <button class="book-now-btn" onclick="goBooking()">
+                    Đặt phòng mới
+                 </button>
+`                               
+
+                }
+
+                switch (phaseData.phase) {
+                    case "NOT_OPEN":
+                        actionDiv.innerHTML = `
+                        <button class="book-now-btn disabled">
+                            Chưa mở (${formatDate(phaseData.openDate)})
+                        </button>
+                       
+                    `;
+                        alert("tại sao " + (phaseData.phase));
+                        break;
+
+                    case "RENEW":
+                        actionDiv.innerHTML = `
+                        <button class="renew-btn" onclick="renewBooking()">
+                            Gia hạn (Giữ chỗ)
+                        </button>
+                    `;
+                        alert("tại sao " + (phaseData.phase));
+                        break;
+
+                    case "NEW":
+                       
+                            actionDiv.innerHTML = `
+            <button class="book-now-btn" onclick="goBooking()">
+                Đặt phòng mới
+            </button>
+        `;
+                        
+                        alert("tại sao " + (phaseData.phase));
+                        break;
+
+                    case "EXPIRED":
+                        actionDiv.innerHTML = `
+                        <button class="book-now-btn disabled">
+                            Đã hết hạn
+                        </button>
+                    `;
+                        alert("tại sao " + (phaseData.phase));
+                        break;
+                }
+
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        // Chỉ hiển thị ngày/tháng/năm
+        function formatDate(dateStr) {
+            if (!dateStr) return "";
+            const d = new Date(dateStr);
+            return d.toLocaleDateString("vi-VN");
+        }
+
+
+
+
+        async function renewBooking() {
+            const userId = getUserIdFromToken();
+            if (!userId) {
+                alert("Phiên đăng nhập hết hạn!");
+                return;
+            }
+
+            try {
+                const existRes = await fetch(`/api/bookingbed/bookingbede/${userId}`, {
+                    method: "POST" // Hoặc GET tùy theo thiết kế Backend của bạn
+                });
+
+                if (existRes.ok) {
+                    const existData = await existRes.json();
+                    // Nếu Backend trả về true/exists hoặc một object chứa đơn hàng đang chờ
+                    if (existData.exists || existData === true) {
+                        alert(" Bạn đã đặt phòng rồi! Mỗi sinh viên chỉ được đặt 1 lần.");
+                        return;
+                    }
+                }
+
+                const checkRes = await fetch(`/api/bookingbed/student/${userId}`);
+
+                if (!checkRes.ok) {
+                    alert("Không tìm thấy thông tin phòng hiện tại để gia hạn.");
+                    return;
+                }
+
+                const bookingData = await checkRes.json();
+
+                // 2. Lấy RoomId từ kết quả trả về
+                // Lưu ý: Kiểm tra kỹ data.roomId hoặc data.room.roomId tùy theo API của bạn
+                const roomId = bookingData.roomId || (bookingData.room ? bookingData.room.roomId : null);
+
+                if (!roomId) {
+                    alert("Dữ liệu phòng không hợp lệ (Missing RoomId).");
+                    return;
+                }
+                const res = await fetch("/api/bookingbed/createEx", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        userId: parseInt(userId),
+                        roomId: parseInt(roomId),
+                        totalAmount: 2000
+                    })
+                });
+
+                if (!res.ok) {
+                    alert("Tạo thanh toán thất bại");
+                    return;
+                }
+
+                const data = await res.json();
+                window.location.href = data.paymentUrl;
+
+
+
+            } catch (err) {
+                console.error(err);
+            }
+        }
+        function goBooking() {
+            //window.location.href = "/BookingBedDetail.html";
+            const userId = getUserIdFromToken();
+            if (!userId) {
+                alert("Phiên đăng nhập hết hạn!");
+                return;
+            }
+            try {
+                window.location.href = "/BookingBedDetail.html";
+            } catch (err) {
+                console.error("Lỗi kiểm tra booking:", err);
+                alert("Có lỗi xảy ra, vui lòng thử lại sau.");
+            }
+        }
+        loadBookings();
+        //const checkRes = await fetch(`/api/bookingbed/bookingbede/${userId}`, {
+        //    method: "POST"    
+        //});
+
+        //const checkData = await checkRes.json();  
+
+        //if (checkData.exists) {
+        //    alert("❌ Bạn đã đặt phòng rồi! Mỗi sinh viên chỉ được đặt 1 lần.");
+        //    return;
+        //}
+        // 1. Gọi lại API lấy thông tin phòng hiện tại của Student
+    </script>
+
+
+
+</body>
+</html>

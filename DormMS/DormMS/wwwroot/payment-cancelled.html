@@ -1,0 +1,63 @@
+﻿<!DOCTYPE html>
+
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Thanh toán bị hủy</title>
+    <link rel="stylesheet" href="payment.css">
+</head>
+<body class="cancel-bg">
+
+    <div class="card">
+        <div class="icon cancel-icon">✖</div>
+        <h1>Thanh toán thất bại</h1>
+
+        ```
+        <div class="info">
+            <p><strong>Mã đơn:</strong> <span id="orderCode"></span></p>
+            <p><strong>Trạng thái:</strong> Đã hủy</p>
+            <p><strong>Thời gian:</strong> <span id="time"></span></p>
+            <p id="message"></p>
+        </div>
+
+        <div class="actions">
+            <button class="btn cancel-btn" onclick="retry()">Thanh toán lại</button>
+            <button class="btn cancel-btn" onclick="goHome()">Trang chủ</button>
+        </div>
+        ```
+
+    </div>
+
+    <script>
+const params = new URLSearchParams(window.location.search);
+const code = params.get("code");
+const orderCode = params.get("orderCode");
+
+// Hiển thị UI
+document.getElementById("orderCode").innerText = orderCode;
+document.getElementById("time").innerText = new Date().toLocaleString();
+document.getElementById("message").innerText =
+    "Giao dịch đã bị hủy hoặc chưa hoàn tất.";
+
+// Gọi API backend (nếu cần xử lý thêm)
+fetch(`/api/bookingbed/payment-cancelled?code=${code}&orderCode=${orderCode}`)
+    .then(res => res.json())
+    .then(data => {
+        console.log("Cancel API:", data);
+    })
+    .catch(err => console.error(err));
+        const BASE_URL = "https://localhost:7088";
+// Actions
+        function retry() {
+           
+    // quay lại trang booking hoặc tạo lại thanh toán
+            window.location.href = BASE_URL + "/BookingBed.html";
+}
+
+function goHome() {
+    window.location.href = BASE_URL + "/student.html";
+}
+    </script>
+
+</body>
+</html>

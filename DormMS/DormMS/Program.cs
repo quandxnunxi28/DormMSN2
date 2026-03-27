@@ -1,5 +1,7 @@
 using DormMS.Models;
-//using DormMS.Repository;
+
+using DormMS.Repository;
+
 using DormMS.Service;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -23,9 +25,9 @@ builder.Services.AddControllers()
 builder.Services.AddDbContext<DormMsnContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("MyCnn")));
-//builder.Services.AddScoped<IBookingbedRepository, BookingbedRepository>();
-//builder.Services.AddScoped<IBookingbedService, BookingbedService>();
-//builder.Services.AddScoped<IPayOSService, PayOSService>();
+builder.Services.AddScoped<IBookingbedRepository, BookingbedRepository>();
+builder.Services.AddScoped<IBookingbedService, BookingbedService>();
+builder.Services.AddScoped<IPayOSService, PayOSService>();
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 
