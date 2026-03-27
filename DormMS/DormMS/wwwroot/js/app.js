@@ -29,3 +29,49 @@ if (logoutBtn) {
             });
     });
 }
+// Hàm giải mã JWT (giữ nguyên vì bắt buộc phải có để đọc token)
+function parseJwt(token) {
+    try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function (c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        return JSON.parse(jsonPayload);
+    } catch (e) {
+        return null;
+    }
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    // 1. Lấy token từ localStorage
+    const token = localStorage.getItem('token');
+    let isAdmin = false;
+
+    // 2. Giải mã và kiểm tra role
+    if (token) {
+        const decodedToken = parseJwt(token);
+        console.log("Token lấy được:", token ? "Có token" : "Không có"); // Cắm cờ kiểm tra số 1
+        if (decodedToken) {
+            // Đọc Claim Role từ C# gen ra
+            const role = decodedToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+            console.log("Role giải mã được:", role); // Cắm cờ kiểm tra số 2
+            // Nếu role là admin thì set cờ true
+            if (role && role.toLowerCase() === 'admin') {
+                isAdmin = true;
+            }
+        }
+    }
+
+    // 3. Xử lý DOM (giao diện)
+    const adminMenu = document.getElementById('adminMenu');
+
+    // Nếu có menu này trên trang
+    if (adminMenu) {
+        if (isAdmin) {
+            adminMenu.style.display = 'block'; // Mở lên cho Admin
+        } else {
+            adminMenu.remove(); // Xóa bay màu luôn nếu là Student (hoặc chưa đăng nhập)
+        }
+    }
+});

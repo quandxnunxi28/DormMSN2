@@ -8,6 +8,7 @@ namespace DormMS.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+
     public class NewsController : ControllerBase
     {
         private readonly DormMsnContext _context;
@@ -80,44 +81,70 @@ namespace DormMS.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin")]
+        [Authorize( Roles = "Admin")]
         public IActionResult Create([FromBody] NewsCreateDto dto)
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var createBy = int.Parse(userId);
-            var news = new News
+            try
             {
-                Title = dto.Title,
-                Summary = dto.Summary,
-                Content = dto.Content,
-                IsImportant = dto.IsImportant,
-                Status = "ACTIVE",
-                CreatedBy = createBy,
-                CreatedDate = DateTime.Now,
-                Type = "GENERAL"
-            };
-            _context.News.Add(news);
-            _context.SaveChanges();
-            return Ok(new { news.NewsId });
+                if (dto == null)
+                    return BadRequest("Dữ liệu không hợp lệ");
+
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+                if (string.IsNullOrEmpty(userId))
+                    return Unauthorized("Không xác định được user");
+
+                if (!int.TryParse(userId, out int createBy))
+                    return BadRequest("UserId không hợp lệ");
+
+                var news = new News
+                {
+                    Title = dto.Title,
+                    Summary = dto.Summary,
+                    Content = dto.Content,
+                    IsImportant = dto.IsImportant,
+                    Status = "ACTIVE",
+                    CreatedBy = createBy,
+                    CreatedDate = DateTime.Now,
+                    Type = "GENERAL"
+                };
+
+                _context.News.Add(news);
+                _context.SaveChanges();
+
+                return Ok(new { news.NewsId , message = "Tạo thông báo thành công!" });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.InnerException?.Message);
+
+                return StatusCode(500, new
+                {
+                    message = "Lỗi server",
+                    error = ex.Message
+                });
+            }
         }
 
         [HttpPut("{id}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize( Roles = "Admin")]
         public IActionResult Update(int id, [FromBody] NewsUpdateDto dto)
         {
             var news = _context.News.FirstOrDefault(x => x.NewsId == id);
-            if (news == null) return NotFound();
+            if (news == null) 
+                return BadRequest(new {message = "Thông báo không tồn tại"});
 
             news.Title = dto.Title;
             news.Summary = dto.Summary;
             news.Content = dto.Content;
             news.IsImportant = dto.IsImportant;
             _context.SaveChanges();
-            return Ok();
+            return Ok(new { message = "Cập nhật thông báo thành công!" });
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize( Roles = "Admin")]
         public IActionResult Delete(int id)
         {
             var news = _context.News.FirstOrDefault(x => x.NewsId == id);
@@ -125,7 +152,7 @@ namespace DormMS.Controllers
 
             news.Status = "INACTIVE";
             _context.SaveChanges();
-            return Ok();
+            return Ok(new { message = "Xóa thông báo thành công!" });
         }
     }
 

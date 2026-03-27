@@ -1,34 +1,54 @@
-using System.Text;
 using DormMS.Models;
+//using DormMS.Repository;
+using DormMS.Service;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.OData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OData.Edm;
-using Microsoft.OData.ModelBuilder;
+using System.Text;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-
+builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    });
 builder.Services.AddDbContext<DormMsnContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("MyCnn")));
+//builder.Services.AddScoped<IBookingbedRepository, BookingbedRepository>();
+//builder.Services.AddScoped<IBookingbedService, BookingbedService>();
+//builder.Services.AddScoped<IPayOSService, PayOSService>();
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
-builder.Services.AddControllers()
-    .AddOData(opt => opt
-        .AddRouteComponents("api", GetEdmModel())
-        .Filter()
-        .Select()
-        .OrderBy()
-        .SetMaxTop(100)
-        .Count()
-    );
+
+
+
+
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = "Cookies";
+    options.DefaultChallengeScheme = "Google";
+})
+.AddCookie()
+.AddGoogle("Google", options =>
+{
+    options.ClientId = builder.Configuration["Google:ClientId"];
+    options.ClientSecret = builder.Configuration["Google:ClientSecret"];
+    options.CallbackPath = "/signin-google";
+});
+
+
+
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -62,18 +82,16 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.Use(async (context, next) =>
+{
+    context.Response.Headers.Add("ngrok-skip-browser-warning", "true");
+    await next();
+});
 app.UseHttpsRedirection();
 app.UseAuthentication();
-
+app.UseStaticFiles();
 app.UseAuthorization();
 
 app.MapControllers();
 
 app.Run();
-static IEdmModel GetEdmModel()
-{
-    var builder = new ODataConventionModelBuilder();
-    builder.EntitySet<Payment>("payment");
-    return builder.GetEdmModel();
-}
