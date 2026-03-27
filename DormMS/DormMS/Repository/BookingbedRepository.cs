@@ -17,13 +17,53 @@ namespace DormMS.Repository
             return roomSpace;
         }
 
-        public async Task<BookingBed> GetStudentBookingbedExist(int id)
+        public async Task<bool> GetStudentBookingbedExist(int id)
         {
-            var bookingbedExist =await _context.BookingBeds.FirstOrDefaultAsync(b => b.UserId == id);
-            return bookingbedExist;
+            var bookingbedExist = await _context.Allotments.FirstOrDefaultAsync(b => b.UserId == id);
+
+
+
+            var todayy = DateOnly.FromDateTime(DateTime.Now);
+            //222
+            DateOnly baseDate = new DateOnly(2025, 12, 10); // mốc kỳ đầu tiên
+
+            //DateOnly today = DateOnly.FromDateTime(DateTime.Now);
+
+            // Nếu đã có allotment → giữ logic cũ
+            DateOnly newAllotDate;
+
+
+
+            // 👉 Tính kỳ gần nhất theo chu kỳ 4 tháng
+            int monthsDiff = ((todayy.Year - baseDate.Year) * 12 + todayy.Month - baseDate.Month);
+
+            int cycle = monthsDiff / 4;
+
+            if (cycle == 0)
+            {
+                newAllotDate = baseDate.AddMonths(4);
+            }
+            else
+            {
+                newAllotDate = baseDate.AddMonths((cycle * 4) + 4);
+            }
+
+
+            // 👉 Nếu chưa từng đặt → cho đặt
+            if (bookingbedExist == null)
+                return true;
+
+            // 👉 Lấy ngày đã đặt trong DB
+            DateOnly allotDate = bookingbedExist.AllotDate ?? DateOnly.MinValue;
+
+            // 👉 So sánh
+            if (allotDate < newAllotDate)
+                return true;  // được đặt
+
+            return false; // không được đặt
         }
 
-            public async Task<Allotment> GetStudentBookingbeds(int id)
+        public async Task<Allotment> GetStudentBookingbeds(int id)
             {
                 var bookingbedStudent =await _context.Allotments.Include(a => a.User)
             .Include(a => a.Room).ThenInclude(r => r.Hostel).FirstOrDefaultAsync(a => a.UserId == id);

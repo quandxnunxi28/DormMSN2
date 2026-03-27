@@ -32,8 +32,8 @@
             <ul>
                 <li>🏠 Home</li>
                 <li onclick="window.location.href='news.html'">📰 News</li>
-                <li>🛏 Room history</li>
-                <li>📅 Bookings</li>
+                <li><a href="BookingHistory.html">🛏 Booking history--</a></li>
+                <li><a href="BookingBed.html">📅 Bookings</a></li>
                 <li onclick="window.location.href='payment.html'">💳 Payment history</li>
                 <li onclick="window.location.href='my_request.html'">📩 My request</li>
                 <li class="active" onclick="window.location.href='request_admin.html'">📩 Manage request</li>
@@ -138,9 +138,6 @@
             };
         }
 
-        function isAdmin() {
-            return localStorage.getItem('role') == 1;
-        }
 
         function formatDate(date) {
             return new Date(date).toLocaleDateString('vi-VN', {
@@ -304,11 +301,6 @@
 
         // ===== INIT =====
         document.addEventListener("DOMContentLoaded", () => {
-            if (!isAdmin()) {
-                alert("Không có quyền truy cập");
-                window.location.href = "index.html";
-                return;
-            }
             loadData();
         });
 

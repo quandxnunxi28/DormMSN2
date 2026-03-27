@@ -28,16 +28,16 @@
         <!-- SIDEBAR GIỮ NGUYÊN -->
         <aside id="sidebar" class="sidebar">
             <ul>
-                <li>🏠 Home</li>
-                <li>📰 News</li>
-                <li>🛏 Room history</li>
-                <li>📅 Bookings</li>
-                <li>💡 Electricity water</li>
-                <li>💳 Payment history</li>
-                <li>📩 My request</li>
-                <li>🚗 Parking ticket</li>
-                <li>📘 User guide</li>
-                <li>❓ FAQ</li>
+                <li class="active"><a href="/student.html">🏠 Home</a></li>
+                <li onclick="window.location.href='news.html'">📰 News</li>
+                <li><a href="BookingHistory.html">🛏 Booking history--</a></li>
+                <li><a href="BookingBed.html">📅 Bookings</a></li>
+                <li>💡 Electricity water--</li>
+                <li onclick="window.location.href='payment.html'">💳 Payment history</li>
+                <li onclick="window.location.href='my_request.html'">📩 My request</li>
+                <li>🚗 Parking ticket--</li>
+                <li>📘 User guide--</li>
+                <li>❓ FAQ--</li>
             </ul>
             <button class="logout-btn">Đăng xuất</button>
         </aside>
@@ -146,7 +146,7 @@
 
                 const checkData = await checkRes.json();
 
-                if (checkData.exists) {
+                if (!checkData.exists) {
                     alert("❌ Bạn đã đặt phòng rồi! Mỗi sinh viên chỉ được đặt 1 lần.");
                     return;
                 }
@@ -157,7 +157,7 @@
             }
 
              // giả lập
-            const price = prompt(`Nhập giá phòng cho ${roomNumber}:`, "1000000");
+            const price = prompt(`Nhập giá phòng cho ${roomNumber}:`, "2000");
 
             if (!price) return;
 
@@ -170,7 +170,7 @@
                     body: JSON.stringify({
                         userId: parseInt(userId),
                         roomId: roomId,
-                        totalAmount: parseInt(price)
+                        totalAmount: 2000
                     })
                 });
                 if (userId == null) {
@@ -196,7 +196,7 @@
                 console.error(err);
                 alert("Lỗi khi gọi API"+ err);
             }
-        }
+        }   
         function showPayment(data) {
             const html = `
         <div style="margin-top:20px; padding:20px; border:1px solid #ccc;">

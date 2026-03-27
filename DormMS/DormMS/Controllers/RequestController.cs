@@ -141,6 +141,7 @@ namespace DormMS.Controllers
                 Description = dto.Description,
                 Status = "Pending"
             };
+        
             _context.Complaints.Add(complaint);
             _context.SaveChanges();
             return Ok (new { message = "Yêu cầu đã được gửi thành công" });

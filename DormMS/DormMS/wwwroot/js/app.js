@@ -25,6 +25,8 @@ if (logoutBtn) {
         })
             .finally(() => {
                 localStorage.removeItem("token");
+                localStorage.removeItem("fullName");
+                localStorage.removeItem("role");
                 window.location.href = "/login.html";
             });
     });

@@ -183,9 +183,35 @@
             window.location.href = "/api/auth/google-login";
         }
 
-  function forgotPassword(){
-    alert("Hệ thống gửi mail quên mật khẩu (cần server backend)");
-  }
+        async function forgotPassword() {
+            const email = document.getElementById("forgotEmail").value;
+
+            if (!email) {
+                alert("Vui lòng nhập email");
+                return;
+            }
+
+            try {
+                const res = await fetch('/api/auth/send-forgot-password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(email)
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    alert("Đã gửi email reset mật khẩu. Vui lòng kiểm tra mail!");
+                    showLogin(); // quay lại login
+                } else {
+                    alert(data.message || "Có lỗi xảy ra");
+                }
+
+            } catch (err) {
+                console.error(err);
+                alert("Lỗi kết nối server");
+            }
+        }
     </script>
 
 </body>

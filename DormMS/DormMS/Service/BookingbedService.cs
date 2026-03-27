@@ -16,7 +16,7 @@ namespace DormMS.Service
             return _bookingbedRepository.GetRoomSpace();
         }
 
-        public Task<BookingBed> GetStudentBookingbedExist(int id)
+        public Task<bool> GetStudentBookingbedExist(int id)
         {
             return _bookingbedRepository.GetStudentBookingbedExist(id);
         }

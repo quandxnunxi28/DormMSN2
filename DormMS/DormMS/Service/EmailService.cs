@@ -1,5 +1,7 @@
 ﻿using MailKit.Net.Smtp;
 using MimeKit;
+using System.Net;
+//using System.Net.Mail;
 
 
 namespace DormMS.Service
@@ -25,6 +27,27 @@ namespace DormMS.Service
 
                 client.Authenticate("quandxhe181250@fpt.edu.vn", "hkdb xfsj wtqu halx");
 
+                client.Send(message);
+                client.Disconnect(true);
+            }
+        }
+        public void SendEmail(string toEmail, string subject, string body)
+        {
+            var message = new MimeMessage();
+
+            message.From.Add(new MailboxAddress("DormMSN", "quandxhe181250@fpt.edu.vn"));
+            message.To.Add(new MailboxAddress("", toEmail));
+            message.Subject = subject;
+
+            message.Body = new TextPart("html") // dùng HTML luôn cho tiện
+            {
+                Text = body
+            };
+
+            using (var client = new SmtpClient())
+            {
+                client.Connect("smtp.gmail.com", 587, false);
+                client.Authenticate("quandxhe181250@fpt.edu.vn", "hkdb xfsj wtqu halx");
                 client.Send(message);
                 client.Disconnect(true);
             }

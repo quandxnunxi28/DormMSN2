@@ -29,16 +29,17 @@
         <!-- SIDEBAR (GIỮ NGUYÊN) -->
         <aside id="sidebar" class="sidebar">
             <ul>
-                <li>🏠 Home</li>
-                <li>📰 News</li>
-                <li>🛏 Room history</li>
+                <li class="active"><a href="/student.html">🏠 Home</a></li>
+                <li onclick="window.location.href='news.html'">📰 News</li>
+                <li><a href="BookingHistory.html">🛏 Booking history--</a></li>
                 <li><a href="BookingBed.html">📅 Bookings</a></li>
-                <li>💡 Electricity water</li>
-                <li>💳 Payment history</li>
-                <li>📩 My request</li>
-                <li>🚗 Parking ticket</li>
-                <li>📘 User guide</li>
-                <li>❓ FAQ</li>
+                <li>💡 Electricity water--</li>
+                <li onclick="window.location.href='payment.html'">💳 Payment history</li>
+                <li onclick="window.location.href='my_request.html'">📩 My request</li>
+                <li onclick="window.location.href='my_request.html'">📩 My request</li>
+                <li>🚗 Parking ticket--</li>
+                <li>📘 User guide--</li>
+                <li>❓ FAQ--</li>
             </ul>
 
             <button class="logout-btn">Đăng xuất</button>
@@ -233,7 +234,7 @@
                 if (existRes.ok) {
                     const existData = await existRes.json();
                     // Nếu Backend trả về true/exists hoặc một object chứa đơn hàng đang chờ
-                    if (existData.exists || existData === true) {
+                    if (!existData.exists) {
                         alert(" Bạn đã đặt phòng rồi! Mỗi sinh viên chỉ được đặt 1 lần.");
                         return;
                     }

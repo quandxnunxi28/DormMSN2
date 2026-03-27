@@ -14,7 +14,7 @@ namespace DormMS.Repository
         public Task<Allotment> GetStudentBookingbeds(int id);
         public Task<List<Room>> GetRoomSpace();
 
-        public Task<BookingBed> GetStudentBookingbedExist(int id);
+        public Task<bool> GetStudentBookingbedExist(int id);
 
     }
 }

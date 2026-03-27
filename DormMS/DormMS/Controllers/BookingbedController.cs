@@ -23,12 +23,12 @@ namespace DormMS.Controllers
             _payOSService = payOSService;
         }
 
-        [HttpGet("student/{id}")]   
+        [HttpGet("student/{id}")]
         public async Task<IActionResult> GetStudentBookingbeds(int id)
         {
             var bookingbed = await _bookingbedService.GetStudentBookingbeds(id);
 
-            if (bookingbed == null )
+            if (bookingbed == null)
             {
                 return NotFound();
             }
@@ -68,7 +68,7 @@ namespace DormMS.Controllers
 
             _context.Payments.Add(paymentEntity);
             await _context.SaveChangesAsync();
-           
+
 
             // 2️⃣ Tạo link thanh toán PayOS
             var payment = await _payOSService.CreatePaymentAsync(booking.BookingId, booking.TotalAmount);
@@ -99,15 +99,15 @@ namespace DormMS.Controllers
 
             _context.BookingBeds.Add(booking);
 
-            var roomOccupied = _context.Rooms.Where(x=> x.RoomId == dto.RoomId).FirstOrDefault();
+            var roomOccupied = _context.Rooms.Where(x => x.RoomId == dto.RoomId).FirstOrDefault();
             roomOccupied.Occupied += 1;
             var paymentEntity = new Payment
             {
                 UserId = booking.UserId,
                 Amount = booking.TotalAmount,
                 Date = DateOnly.FromDateTime(DateTime.Now),
-                Method= "Online",
-                Description= "null nhe!",
+                Method = "Online",
+                Description = "null nhe!",
                 Status = "Pending"
             };
 
@@ -204,13 +204,18 @@ namespace DormMS.Controllers
             DateOnly baseDate = new DateOnly(2025, 12, 10); // mốc kỳ đầu tiên
 
             DateOnly today = DateOnly.FromDateTime(DateTime.Now);
-                
+
             // Nếu đã có allotment → giữ logic cũ
             DateOnly newAllotDate;
 
             if (oldAllot != null && oldAllot.AllotDate.HasValue)
             {
-                newAllotDate = oldAllot.AllotDate.Value.AddMonths(4);
+                oldAllot.AllotDate = oldAllot.AllotDate.Value.AddMonths(4);
+                var paymentId=  _context.Payments.Where(x => x.UserId == booking.UserId).OrderByDescending(x => x.PaymentId).FirstOrDefault();
+                if(paymentId != null)
+                {
+                    paymentId.Status = "Paid";
+                }
             }
             else
             {
@@ -226,6 +231,15 @@ namespace DormMS.Controllers
                 {
                     newAllotDate = newAllotDate.AddMonths(4);
                 }
+                var newAllot = new Allotment
+                {
+                    UserId = booking.UserId,
+                    RoomId = booking.RoomId,
+                    AllotDate = newAllotDate,
+                    LeaveDate = null,
+                    Status = "Active"
+                };
+                _context.Allotments.Add(newAllot);
             }
 
 
@@ -234,16 +248,9 @@ namespace DormMS.Controllers
 
 
             // mêmmemmemememe
-            var newAllot = new Allotment
-            {
-                UserId = booking.UserId,
-                RoomId = booking.RoomId,
-                AllotDate = newAllotDate,
-                LeaveDate = null,
-                Status = "Active"
-            };
 
-            _context.Allotments.Add(newAllot);
+
+
 
 
 
@@ -302,7 +309,7 @@ namespace DormMS.Controllers
 
                 await _context.SaveChangesAsync();
             }
-            
+
             // Xử lý khi người dùng nhấn "Hủy thanh toán" trên giao diện PayOS
             return Ok(new
             {
@@ -329,10 +336,10 @@ namespace DormMS.Controllers
         [HttpPost("bookingbede/{id}")]
         public async Task<IActionResult> CheckuserExist(int id)
         {
-            var userExist= await _bookingbedService.GetStudentBookingbedExist(id);
+            var userExist = await _bookingbedService.GetStudentBookingbedExist(id);
             return Ok(new
             {
-                exists = userExist != null
+                exists = userExist
             });
         }
         [HttpGet("check-booking-phase/{userId}")]
@@ -348,29 +355,29 @@ namespace DormMS.Controllers
             {
                 var todayy = DateOnly.FromDateTime(DateTime.Now);
                 //222
-                DateOnly baseDate = new DateOnly(2025, 12, 10); // mốc kỳ đầu tiên
-
+                DateOnly baseDate = new DateOnly(2025, 12, 2); // mốc kỳ đầu tiên
+                    
                 //DateOnly today = DateOnly.FromDateTime(DateTime.Now);
 
                 // Nếu đã có allotment → giữ logic cũ
                 DateOnly newAllotDate;
 
-               
-               
-                    // 👉 Tính kỳ gần nhất theo chu kỳ 4 tháng
-                    int monthsDiff = ((todayy.Year - baseDate.Year) * 12 + todayy.Month - baseDate.Month);
 
-                    int cycle = monthsDiff / 4;
 
-                if(cycle == 0)
+                // 👉 Tính kỳ gần nhất theo chu kỳ 4 tháng
+                int monthsDiff = ((todayy.Year - baseDate.Year) * 12 + todayy.Month - baseDate.Month);
+
+                int cycle = monthsDiff / 4;
+
+                if (cycle == 0)
                 {
                     newAllotDate = baseDate;
                 }
                 else
                 {
-                    newAllotDate = baseDate.AddMonths((cycle * 4)-4);
+                    newAllotDate = baseDate.AddMonths((cycle * 4) - 4);
                 }
-                   
+
 
 
 
@@ -380,9 +387,9 @@ namespace DormMS.Controllers
                 var globalEndDate = globalStartDate.AddMonths(4);//10/4/2026
                 var openDatee = globalEndDate.AddDays(-20);//21/3/2026
                 var phase1Endd = openDatee.AddDays(10);////1/4/2026
- 
+
                 bool canNewBookingg = false;
-                        
+
                 if (todayy < openDatee)
                 {
                     phase = "NOT_OPEN";
@@ -420,7 +427,7 @@ namespace DormMS.Controllers
             var openDate = endDate.AddDays(-20);    // Mở cổng trước 20 ngày
             var phase1End = openDate.AddDays(10);   // Giai đoạn RENEW kéo dài 10 ngày
 
-           
+
             bool canRenew = false;
             bool canNewBooking = false;
 
@@ -502,7 +509,7 @@ namespace DormMS.Controllers
             DateOnly today = DateOnly.FromDateTime(DateTime.Now);
 
             int monthsDiff = ((today.Year - baseDate.Year) * 12 + today.Month - baseDate.Month);
-            int cycle    = monthsDiff / 4;
+            int cycle = monthsDiff / 4;
 
             DateOnly nextCycle = baseDate.AddMonths((cycle + 1) * 4);
 
@@ -541,8 +548,17 @@ namespace DormMS.Controllers
 
             return Ok(new { message = "Đã xóa" });
         }
+        [HttpGet("id")]
 
-
+        public async Task<IActionResult> test(int UserId)
+        {
+var oldAllot = await _context.Allotments
+                .Where(x => x.UserId == UserId)
+                .OrderByDescending(x => x.AllotDate)
+                .FirstOrDefaultAsync();
+            return Ok(oldAllot);
+        }
+            
 
     }
 }
