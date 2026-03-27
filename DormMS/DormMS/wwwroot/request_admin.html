@@ -1,0 +1,321 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý yêu cầu</title>
+    <link rel="stylesheet" href="/css/Home.css">
+    <!--<link rel="stylesheet" href="/css/NewsDetail.css">-->
+    <link rel="stylesheet" href="/css/RequestAdmin.css">
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- ===== TOPBAR (GIỐNG Y HỆT) ===== -->
+    <header class="topbar">
+        <div class="left-top">
+            <button class="menu-btn">☰</button>
+            <div class="logo">
+                <img src="logo.png" height="35">
+                <span>On campus Dormitory</span>
+            </div>
+        </div>
+        <div class="right-menu">
+            <button class="campus-btn">Hòa Lạc</button>
+        </div>
+    </header>
+
+    <div class="layout">
+
+        <!-- ===== SIDEBAR (GIỐNG) ===== -->
+        <aside class="sidebar">
+            <ul>
+                <li>🏠 Home</li>
+                <li onclick="window.location.href='news.html'">📰 News</li>
+                <li>🛏 Room history</li>
+                <li>📅 Bookings</li>
+                <li onclick="window.location.href='payment.html'">💳 Payment history</li>
+                <li onclick="window.location.href='my_request.html'">📩 My request</li>
+                <li class="active" onclick="window.location.href='request_admin.html'">📩 Manage request</li>
+                <li>🚗 Parking ticket</li>
+                <li>📘 User guide</li>
+                <li>❓ FAQ</li>
+            </ul>
+            <button class="logout-btn">Đăng xuất</button>
+        </aside>
+
+        <!-- ===== CONTENT ===== -->
+        <main class="content">
+
+            <!-- TOP BAR -->
+            <div class="top-bar">
+                <a class="back-btn" href="news.html">← Quay lại</a>
+            </div>
+
+            <!-- CARD -->
+            <div class="detail-card">
+
+                <div class="detail-card-header">
+                    <div class="detail-badge">REQUEST MANAGEMENT</div>
+                    <h1 class="detail-title">Danh sách yêu cầu</h1>
+                </div>
+
+                <!-- FILTER -->
+                <div class="detail-meta" style="gap:10px; flex-wrap:wrap;">
+
+                    <!-- STATUS -->
+                    <select id="filter-status">
+                        <option value="">Tất cả trạng thái</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Accepted">Accepted</option>
+                        <option value="Rejected">Rejected</option>
+                    </select>
+
+                    <!-- ISSUE -->
+                    <select id="filter-issue">
+                        <option value="">-- Chọn loại sự cố --</option>
+                        <option value="Sự cố điện">Sự cố điện</option>
+                        <option value="Sự cố nước">Sự cố nước</option>
+                        <option value="Hỏng hóc thiết bị">Hỏng hóc thiết bị</option>
+                        <option value="Vệ sinh">Vệ sinh</option>
+                        <option value="An ninh">An ninh</option>
+                        <option value="Tiếng ồn">Tiếng ồn</option>
+                        <option value="Điều hòa/quạt">Điều hòa/quạt</option>
+                    </select>
+
+                    <button class="btn-submit" onclick="loadData()">Lọc</button>
+                </div>
+
+                <!-- LIST -->
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Loại sự cố</th>
+                                <th>Người yêu cầu</th>
+                                <th>Phòng</th>
+                                <th>Ngày gửi</th>
+                                <th>Trạng thái</th>
+                                <th>Action</th>
+
+                            </tr>
+                        </thead>
+                        <tbody id="complaint-list">
+                            <!-- JS render vào đây -->
+                        </tbody>
+                    </table>
+                    <div class="pagination" id="pagination"></div>
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+
+    <!-- ===== MODAL DETAIL ===== -->
+    <div class="modal-overlay" id="detailModal">
+        <div class="modal">
+            <div class="modal-title">Chi tiết yêu cầu</div>
+
+            <div id="detail-content"></div>
+
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeModal()">Đóng</button>
+                <button class="btn-submit" onclick="updateStatus(currentId,'Accepted')">✔ Accept</button>
+                <button class="btn-confirm-delete" onclick="updateStatus(currentId,'Rejected')">❌ Reject</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentId = null;
+        let currentPage = 1;
+
+        function authHeaders() {
+            return {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+            };
+        }
+
+        function isAdmin() {
+            return localStorage.getItem('role') == 1;
+        }
+
+        function formatDate(date) {
+            return new Date(date).toLocaleDateString('vi-VN', {
+                day: '2-digit', month: '2-digit', year: 'numeric'
+            });
+        }
+
+        function getStatusBadgeVN(status) {
+            const s = (status || '').toLowerCase();
+
+            if (s === 'accepted')
+                return `<span class="status accepted">Chấp nhận</span>`;
+
+            if (s === 'rejected')
+                return `<span class="status rejected">Từ chối</span>`;
+
+            return `<span class="status pending">Chờ xử lý</span>`;
+        }
+
+        // ===== LOAD LIST =====
+        function loadData(page = 1) {
+            currentPage = page;
+
+            const status = document.getElementById('filter-status').value;
+            const issue = document.getElementById('filter-issue').value;
+
+            const container = document.getElementById('complaint-list');
+
+            container.innerHTML = `
+                <div class="state-box">
+                    <div class="icon">⏳</div>
+                    <p>Đang tải...</p>
+                </div>`;
+
+            fetch(`/api/request/admin?page=${page}&status=${status}&issue=${issue}`, {
+                headers: authHeaders()
+            })
+                .then(res => res.json())
+                .then(res => {
+                    renderList(res);
+                    renderPagination(res.currentPage, res.totalPages);
+                })
+                .catch(() => {
+                    container.innerHTML = `
+                        <div class="state-box">
+                            <div class="icon">⚠️</div>
+                            <p>Lỗi tải dữ liệu</p>
+                        </div>`;
+                });
+        }
+
+        function renderList(res) {
+            const tbody = document.getElementById('complaint-list');
+
+            if (!res.data || res.data.length === 0) {
+                tbody.innerHTML = `
+        <tr>
+            <td colspan="7" style="text-align:center; padding:20px;">
+                📭 Không có dữ liệu
+            </td>
+        </tr>`;
+                return;
+            }
+
+            tbody.innerHTML = res.data.map(x => `
+        <tr>
+            <td>${x.issue}</td>
+            <td>${x.userName}</td>
+            <td>${x.roomNumber ?? 'N/A'}</td>
+            <td>${formatDate(x.dateFiled)}</td>
+            <td>${getStatusBadgeVN(x.status)}</td>
+
+            <td>
+                <button onclick="openDetail(${x.complaintId})">👁</button>
+
+                <button onclick="updateStatus(${x.complaintId}, 'Accepted')">✔</button>
+
+                <button onclick="updateStatus(${x.complaintId}, 'Rejected')">❌</button>
+            </td>
+        </tr>
+    `).join('');
+        }
+
+        // ===== DETAIL =====
+        function openDetail(id) {
+            fetch(`/api/request/${id}`, {
+                headers: authHeaders()
+            })
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById('detail-content').innerHTML = `
+                            <div class="detail-row"><b>Loại:</b> ${data.issue}</div>
+                            <div class="detail-row"><b>Người gửi:</b> ${data.userName}</div>
+                            <div class="detail-row"><b>Phòng:</b> ${data.roomNumber ?? 'N/A'}</div>
+                            <div class="detail-row"><b>Ngày gửi:</b> ${formatDate(data.dateFiled)}</div>
+                            <div class="detail-row"><b>Trạng thái:</b> ${getStatusBadgeVN(data.status)}</div>
+                            <div class="detail-row"><b>Mô tả:</b> ${(data.description).replace(/\n/g, '<br>')}</div>
+                            
+                            `;
+                    currentId = data.complaintId;
+                    document.getElementById('detailModal').classList.add('open');
+                });
+        }
+
+        function closeModal() {
+            document.getElementById('detailModal').classList.remove('open');
+        }
+
+        // ===== UPDATE STATUS =====
+        function updateStatus(id, status) {
+            if (!confirm("Xác nhận cập nhật trạng thái?")) return;
+
+            fetch(`/api/request/${id}/status`, {
+                method: 'PUT',
+                headers: authHeaders(),
+                body: JSON.stringify({ status })
+            })
+                .then(async res => {
+                    if (!res.ok) {
+                        const err = await res.json();
+                        throw new Error(err.message);
+                    }
+                    const data = await res.json();
+                    showToast(data.message, 'success');
+                    loadData(currentPage);
+                    closeModal();
+                })
+                .catch(err => showToast(err.message, 'error'));
+        }
+
+        // ===== TOAST =====
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+        function renderPagination(current, total) {
+            const el = document.getElementById('pagination');
+            if (total <= 1) { el.innerHTML = ''; return; }
+
+            let html = '';
+
+            // Nút Previous
+            html += `<button class="page-btn" onclick="loadData(${current - 1})" ${current === 1 ? 'disabled' : ''}>‹</button>`;
+
+            // Số trang
+            for (let i = 1; i <= total; i++) {
+                if (total > 7 && i > 2 && i < total - 1 && Math.abs(i - current) > 1) {
+                    if (i === 3 || i === total - 2) html += `<span class="page-info">...</span>`;
+                    continue;
+                }
+                html += `<button class="page-btn ${i === current ? 'active' : ''}" onclick="loadData(${i})">${i}</button>`;
+            }
+
+            // Nút Next
+            html += `<button class="page-btn" onclick="loadData(${current + 1})" ${current === total ? 'disabled' : ''}>›</button>`;
+            el.innerHTML = html;
+        }
+
+        // ===== INIT =====
+        document.addEventListener("DOMContentLoaded", () => {
+            if (!isAdmin()) {
+                alert("Không có quyền truy cập");
+                window.location.href = "index.html";
+                return;
+            }
+            loadData();
+        });
+
+        // đóng modal khi click ngoài
+        document.getElementById('detailModal').addEventListener('click', function (e) {
+            if (e.target === this) closeModal();
+        });
+    </script>
+    </body>
+</html>

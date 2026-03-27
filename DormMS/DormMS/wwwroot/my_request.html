@@ -3,373 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>My Request</title>
+    <link rel="stylesheet" href="/css/MyRequest.css">
     <link rel="stylesheet" href="/css/Home.css">
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        .content {
-            flex: 1;
-            padding: 36px 40px;
-            background: #f4f6f9;
-            font-family: 'Be Vietnam Pro', sans-serif;
-        }
 
-        .page-header {
-            margin-bottom: 28px;
-        }
-
-            .page-header h1 {
-                font-size: 28px;
-                font-weight: 700;
-                color: #1a2340;
-                letter-spacing: -0.5px;
-            }
-
-            .page-header p {
-                font-size: 13px;
-                color: #9aa1b1;
-                margin-top: 4px;
-            }
-
-        .top-bar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-
-        /* Filter */
-        .filter-bar {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .filter-btn {
-            padding: 7px 16px;
-            border-radius: 20px;
-            border: 1px solid #e5e7eb;
-            background: #fff;
-            font-size: 13px;
-            font-weight: 600;
-            color: #6b7280;
-            cursor: pointer;
-            font-family: 'Be Vietnam Pro', sans-serif;
-            transition: all 0.15s;
-        }
-
-            .filter-btn:hover {
-                border-color: #1e4db7;
-                color: #1e4db7;
-            }
-
-            .filter-btn.active {
-                background: #1e4db7;
-                color: #fff;
-                border-color: #1e4db7;
-            }
-
-            .filter-btn.active-pending {
-                background: #ea580c;
-                color: #fff;
-                border-color: #ea580c;
-            }
-
-            .filter-btn.active-resolved {
-                background: #16a34a;
-                color: #fff;
-                border-color: #16a34a;
-            }
-
-        /* Add button */
-        .btn-add {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: #1e4db7;
-            color: #fff;
-            font-size: 13px;
-            font-weight: 600;
-            padding: 8px 18px;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            transition: background 0.15s;
-            font-family: 'Be Vietnam Pro', sans-serif;
-        }
-
-            .btn-add:hover {
-                background: #1a3f9e;
-            }
-
-        /* Table */
-        .table-wrap {
-            background: #fff;
-            border-radius: 14px;
-            border: 1px solid #eaecf0;
-            overflow: hidden;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 14px;
-        }
-
-        thead tr {
-            background: #f8fafc;
-            border-bottom: 1px solid #eaecf0;
-        }
-
-        thead th {
-            padding: 14px 20px;
-            text-align: left;
-            font-size: 12px;
-            font-weight: 700;
-            color: #6b7280;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-        }
-
-        tbody tr {
-            border-bottom: 1px solid #f3f4f6;
-            transition: background 0.15s;
-        }
-
-            tbody tr:last-child {
-                border-bottom: none;
-            }
-
-            tbody tr:hover {
-                background: #f8fafc;
-            }
-
-        tbody td {
-            padding: 14px 20px;
-            color: #374151;
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 3px 10px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 600;
-        }
-
-        .badge-pending {
-            background: #ffedd5;
-            color: #ea580c;
-        }
-
-        .badge-resolved {
-            background: #dcfce7;
-            color: #16a34a;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #9aa1b1;
-        }
-
-            .empty-state .icon {
-                font-size: 40px;
-                margin-bottom: 12px;
-            }
-
-            .empty-state p {
-                font-size: 14px;
-            }
-
-        /* Pagination */
-        .pagination {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            padding: 20px;
-        }
-
-        .page-btn {
-            width: 34px;
-            height: 34px;
-            border-radius: 8px;
-            border: 1px solid #e5e7eb;
-            background: #fff;
-            font-size: 13px;
-            font-weight: 600;
-            color: #374151;
-            cursor: pointer;
-            font-family: 'Be Vietnam Pro', sans-serif;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.15s;
-        }
-
-            .page-btn:hover:not(:disabled) {
-                border-color: #1e4db7;
-                color: #1e4db7;
-            }
-
-            .page-btn.active {
-                background: #1e4db7;
-                color: #fff;
-                border-color: #1e4db7;
-            }
-
-            .page-btn:disabled {
-                opacity: 0.4;
-                cursor: not-allowed;
-            }
-
-        .page-info {
-            font-size: 13px;
-            color: #9aa1b1;
-            margin: 0 6px;
-        }
-
-        /* Modal */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.4);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-
-            .modal-overlay.open {
-                display: flex;
-            }
-
-        .modal {
-            background: #fff;
-            border-radius: 16px;
-            width: 100%;
-            max-width: 540px;
-            padding: 32px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
-            font-family: 'Be Vietnam Pro', sans-serif;
-        }
-
-        .modal-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: #1a2340;
-            margin-bottom: 24px;
-        }
-
-        .form-group {
-            margin-bottom: 16px;
-        }
-
-            .form-group label {
-                display: block;
-                font-size: 13px;
-                font-weight: 600;
-                color: #374151;
-                margin-bottom: 6px;
-            }
-
-            .form-group select, .form-group textarea {
-                width: 100%;
-                padding: 10px 14px;
-                border: 1px solid #e5e7eb;
-                border-radius: 8px;
-                font-size: 14px;
-                color: #1a2340;
-                font-family: 'Be Vietnam Pro', sans-serif;
-                outline: none;
-                transition: border-color 0.15s;
-                box-sizing: border-box;
-            }
-
-                .form-group select:focus, .form-group textarea:focus {
-                    border-color: #1e4db7;
-                }
-
-            .form-group textarea {
-                min-height: 100px;
-                resize: vertical;
-            }
-
-                .form-group select.error, .form-group textarea.error {
-                    border-color: #dc2626 !important;
-                }
-
-        .field-error {
-            font-size: 12px;
-            color: #dc2626;
-            margin-top: 5px;
-            display: none;
-        }
-
-            .field-error.show {
-                display: block;
-            }
-
-        .char-counter {
-            font-size: 11px;
-            color: #9aa1b1;
-            text-align: right;
-            margin-top: 4px;
-        }
-
-            .char-counter.warn {
-                color: #ea580c;
-            }
-
-            .char-counter.over {
-                color: #dc2626;
-                font-weight: 600;
-            }
-
-        .modal-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-        }
-
-        .btn-cancel {
-            padding: 9px 20px;
-            border-radius: 8px;
-            border: 1px solid #e5e7eb;
-            background: #fff;
-            color: #374151;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            font-family: 'Be Vietnam Pro', sans-serif;
-        }
-
-            .btn-cancel:hover {
-                background: #f9fafb;
-            }
-
-        .btn-submit {
-            padding: 9px 20px;
-            border-radius: 8px;
-            border: none;
-            background: #1e4db7;
-            color: #fff;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            font-family: 'Be Vietnam Pro', sans-serif;
-            transition: background 0.15s;
-        }
-
-            .btn-submit:hover {
-                background: #1a3f9e;
-            }
-
-            .btn-submit:disabled {
-                background: #93aee8;
-                cursor: not-allowed;
-            }
-    </style>
 </head>
 <body>
     <header class="topbar">
@@ -395,6 +32,7 @@
                 <li>💡 Electricity water</li>
                 <li>💳 Payment history</li>
                 <li class="active">📩 My request</li>
+                <li id="adminMenu" style="display: none;" onclick="window.location.href='request_admin.html'">📩 Manage request</li>
                 <li>🚗 Parking ticket</li>
                 <li>📘 User guide</li>
                 <li>❓ FAQ</li>
@@ -412,7 +50,8 @@
                 <div class="filter-bar">
                     <button class="filter-btn active" onclick="setFilter('')">Tất cả</button>
                     <button class="filter-btn" onclick="setFilter('Pending')">Chờ xử lý</button>
-                    <button class="filter-btn" onclick="setFilter('Resolved')">Đã xử lý</button>
+                    <button class="filter-btn" onclick="setFilter('Accepted')">Đã xử lý</button>
+                    <button class="filter-btn" onclick="setFilter('Rejected')">Bị từ chối</button>
                 </div>
                 <button class="btn-add" onclick="openCreateModal()">+ Tạo yêu cầu mới</button>
             </div>
@@ -480,7 +119,8 @@
             const btns = document.querySelectorAll('.filter-btn');
             if (status === '') btns[0].className = 'filter-btn active';
             if (status === 'Pending') btns[1].className = 'filter-btn active-pending';
-            if (status === 'Resolved') btns[2].className = 'filter-btn active-resolved';
+            if (status === 'Accepted') btns[2].className = 'filter-btn active-resolved';
+            if (status === 'Rejected') btns[3].className = 'filter-btn active-resolved';
 
             loadComplaints(1);
         }
@@ -587,11 +227,19 @@
                     description: document.getElementById('inp-description').value.trim()
                 })
             })
-                .then(res => {
-                    if (!res.ok) throw new Error(); closeCreateModal();
+                .then(async res => {
+                    if (!res.ok) {
+                        const err = await res.json();
+                        throw new Error(err.message);
+                    }
+                    const data = await res.json();
+                    closeCreateModal();
                     loadComplaints(1);
+                    showToast(data.message, 'success');
                 })
-                .catch(() => alert('Có lỗi xảy ra, vui lòng thử lại!'))
+                .catch((err) => {
+                    showToast(err.message, 'error');
+                })
                 .finally(() => { btn.disabled = false; btn.textContent = 'Tạo yêu cầu'; });
         }
 
@@ -607,6 +255,13 @@
         function formatDate(date) {
             if (!date) return '--';
             return new Date(date).toLocaleDateString('vi-VN');
+        }
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000); // tự mất sau 3 giây
         }
         document.addEventListener("DOMContentLoaded", () => loadComplaints(1));
     </script>
