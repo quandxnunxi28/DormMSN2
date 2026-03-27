@@ -27,17 +27,13 @@
         <!-- SIDEBAR -->
         <aside id="sidebar" class="sidebar">
             <ul>
-                <li class="active"><a href="/student.html">🏠 Home</a></li>
+                <li class="active" onclick="window.location.href='student.html'">🏠 Home</a></li>
                 <li onclick="window.location.href='news.html'">📰 News</li>
-                <li><a href="BookingHistory.html">🛏 Booking history--</a></li>
-                <li><a href="BookingBed.html">📅 Bookings</a></li>
-                <li>💡 Electricity water--</li>
+                <li onclick="window.location.href='BookingHistory.html'">🛏 Booking history--</a></li>
+                <li onclick="window.location.href='BookingBed.html'">📅 Bookings</a></li>
                 <li onclick="window.location.href='payment.html'">💳 Payment history</li>
                 <li onclick="window.location.href='my_request.html'">📩 My request</li>
-                <li class="active" onclick="window.location.href='request_admin.html'">📩 Manage request</li>
-                <li>🚗 Parking ticket--</li>
-                <li>📘 User guide--</li>
-                <li>❓ FAQ--</li>
+                <li onclick="window.location.href='request_admin.html'">📩 Manage request</li>
             </ul>
 
             <button id="logoutBtn" class="logout-btn">Đăng xuất</button>
@@ -56,24 +52,11 @@
 
                         <div class="panel-head1">News</div>
 
-                        <div class="panel-body1">
+                        <div class="panel-body1" id="newsContainer">
 
-                            <div class="news-row">
-                                <h3>THÔNG BÁO THAY ĐỔI LỊCH ĐĂNG KÝ PHÒNG</h3>
-                                <p>By huongct12 2025-12-17</p>
-                            </div>
+                            <!-- js load dữ liệu  -->
 
-                            <div class="news-row">
-                                <h3>THÔNG BÁO V/V ĐĂNG KÝ/HỦY PHÒNG KTX</h3>
-                                <p>By huongct12 2025-12-04</p>
-                            </div>
-
-                            <div class="news-row">
-                                <h3>Tập huấn PCCC và cứu nạn cứu hộ</h3>
-                                <p>By huongct12 2025-11-27</p>
-                            </div>
-
-                            <a class="more-link" href="#">See more</a>
+                            <a class="more-link" href="news.html">See more</a>
 
                         </div>
 
@@ -192,7 +175,51 @@
             document.getElementById("dob").innerText = user.dob || "";
             document.getElementById("balance").innerText = "Balance: " + user.balance + " VND";
         }
+        async function loadTop5() {
+            const container = document.getElementById("newsContainer");
+            try {
+                const res = await fetch('/api/news/top-5');
+                if (!res.ok) {
+                    container.innerHTML = `
+                        <div class="news-row">
+                         <h3 style="color:red;">Không thể tải dữ liệu</h3>
+                        </div>
+                        `;
+                    return;
+                }
+                const data = await res.json();
+                container.innerHTML = '';
+                data.forEach(item => {
+                    const div = document.createElement("div");
+                    div.className = "news-row";
+                    const date = new Date(item.createdDate)
+                        .toISOString()
+                        .split("T")[0];
 
+                        div.innerHTML = `
+                        <h3>${item.title}</h3>
+                        <p>By ${item.createdByName || "Unknown"} ${date}</p>
+                        `;
+                    container.appendChild(div);
+                });
+                // thêm lại See more
+                const more = document.createElement("a");
+                more.className = "more-link";
+                more.href = "news.html";
+                more.innerText = "See more";
+
+                container.appendChild(more);
+            } catch (err){
+                container.innerHTML = `
+                    <div class="news-row">
+                    <h3 style="color:red;">Lỗi kết nối server</h3>
+                    <p>${err.message}</p>
+                    </div>
+                    `;
+                console.error(err);
+            }
+        }
+        loadTop5();
         loadProfile();
     </script>
 </body>
