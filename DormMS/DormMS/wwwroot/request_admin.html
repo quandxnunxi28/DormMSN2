@@ -152,7 +152,7 @@
             const s = (status || '').toLowerCase();
 
             if (s === 'accepted')
-                return `<span class="status accepted">Đã xử lý</span>`;
+                return `<span class="status accepted">Chấp nhận</span>`;
 
             if (s === 'rejected')
                 return `<span class="status rejected">Từ chối</span>`;
@@ -264,7 +264,6 @@
                         throw new Error(err.message);
                     }
                     const data = await res.json();
-
                     showToast(data.message, 'success');
                     loadData(currentPage);
                     closeModal();

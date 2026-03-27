@@ -65,7 +65,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // 3. Xử lý DOM (giao diện)
     const adminMenu = document.getElementById('adminMenu');
-
     // Nếu có menu này trên trang
     if (adminMenu) {
         if (isAdmin) {
@@ -74,4 +73,29 @@ document.addEventListener("DOMContentLoaded", function () {
             adminMenu.remove(); // Xóa bay màu luôn nếu là Student (hoặc chưa đăng nhập)
         }
     }
+    const btnAdd = document.getElementById('btn-add-news');
+    if (btnAdd) {
+        if (isAdmin) {
+            btnAdd.style.display = 'block'; 
+        } else {
+            btnAdd.remove(); 
+        }
+    }
+    const btnEdit = document.getElementById('btn-edit-news');
+    if (btnEdit) {
+        if (isAdmin) {
+            btnEdit.style.display = 'block';
+        } else {
+            btnEdit.remove();
+        }
+    }
+    const btnDelete = document.getElementById('btn-delete-news');
+    if (btnDelete) {
+        if (isAdmin) {
+            btnDelete.style.display = 'block';
+        } else {
+            btnDelete.remove();
+        }
+    }
+
 });
