@@ -14,6 +14,8 @@ public partial class DormMsnContext : DbContext
         : base(options)
     {
     }
+
+    public virtual DbSet<News> News { get; set; }
     public virtual DbSet<BookingBed> BookingBeds { get; set; }
     public virtual DbSet<Allotment> Allotments { get; set; }
 
@@ -327,10 +329,31 @@ public partial class DormMsnContext : DbContext
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnName("created_at");
 
-            entity.Property(e => e.TotalAmount)      
+            entity.Property(e => e.TotalAmount)
        .HasColumnType("decimal(18,2)")
        .HasDefaultValue(0)
        .HasColumnName("totalAmount");
+        });
+
+        modelBuilder.Entity<News>(entity =>
+        {
+            entity.ToTable("news");
+
+            entity.HasKey(e => e.NewsId);
+
+            entity.Property(e => e.NewsId).HasColumnName("news_id");
+            entity.Property(e => e.Title).HasColumnName("title");
+            entity.Property(e => e.Content).HasColumnName("content");
+            entity.Property(e => e.Summary).HasColumnName("summary");
+            entity.Property(e => e.Type).HasColumnName("type");
+            entity.Property(e => e.Status).HasColumnName("status");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.CreatedDate).HasColumnName("created_date");
+            entity.Property(e => e.IsImportant).HasColumnName("is_important");
+
+            entity.HasOne<HostelUser>()
+                .WithMany()
+                .HasForeignKey(e => e.CreatedBy);
         });
 
         OnModelCreatingPartial(modelBuilder);

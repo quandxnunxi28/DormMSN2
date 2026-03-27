@@ -1,0 +1,635 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Chi tiết thông báo</title>
+    <link rel="stylesheet" href="/css/Home.css">
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .field-error {
+            font-size: 12px;
+            color: #dc2626;
+            margin-top: 5px;
+            display: none;
+        }
+
+            .field-error.show {
+                display: block;
+            }
+
+        .content {
+            flex: 1;
+            padding: 36px 40px;
+            background: #f4f6f9;
+            font-family: 'Be Vietnam Pro', sans-serif;
+        }
+
+        .top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #1e4db7;
+            text-decoration: none;
+            padding: 6px 14px;
+            border-radius: 8px;
+            background: #eff6ff;
+            border: 1px solid #dbeafe;
+            transition: background 0.15s;
+        }
+
+            .back-btn:hover {
+                background: #dbeafe;
+            }
+
+        .action-btns {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-edit {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 16px;
+            border-radius: 8px;
+            border: 1px solid #1e4db7;
+            background: #fff;
+            color: #1e4db7;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Be Vietnam Pro', sans-serif;
+            transition: background 0.15s;
+        }
+
+            .btn-edit:hover {
+                background: #eff6ff;
+            }
+
+        .btn-delete {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 16px;
+            border-radius: 8px;
+            border: none;
+            background: #fee2e2;
+            color: #dc2626;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Be Vietnam Pro', sans-serif;
+            transition: background 0.15s;
+        }
+
+            .btn-delete:hover {
+                background: #fecaca;
+            }
+
+        /* Detail card */
+        .detail-card {
+            background: #fff;
+            border-radius: 16px;
+            border: 1px solid #eaecf0;
+            overflow: hidden;
+            max-width: 820px;
+        }
+
+        .detail-card-header {
+            background: linear-gradient(135deg, #1e4db7 0%, #3b82f6 100%);
+            padding: 28px 36px;
+        }
+
+        .detail-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            color: #fff;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 12px;
+            border-radius: 20px;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        .detail-badge-important {
+            display: inline-block;
+            background: rgba(255,255,255,0.25);
+            color: #fef3c7;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 12px;
+            border-radius: 20px;
+            margin-bottom: 12px;
+            margin-left: 6px;
+            letter-spacing: 0.5px;
+        }
+
+        .char-counter {
+            font-size: 11px;
+            color: #9aa1b1;
+            text-align: right;
+            margin-top: 4px;
+        }
+
+            .char-counter.warn {
+                color: #ea580c;
+            }
+
+            .char-counter.over {
+                color: #dc2626;
+                font-weight: 600;
+            }
+
+        .detail-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #fff;
+            line-height: 1.4;
+            margin: 0;
+        }
+
+        .detail-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 18px 36px;
+            border-bottom: 1px solid #f3f4f6;
+            background: #fafbfc;
+        }
+
+        .meta-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1e4db7, #60a5fa);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 13px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .meta-name {
+            font-weight: 600;
+            color: #1a2340;
+            font-size: 14px;
+        }
+
+        .meta-date {
+            font-size: 12px;
+            color: #9aa1b1;
+            margin-top: 2px;
+        }
+
+        .detail-body {
+            padding: 32px 36px;
+            font-size: 15px;
+            color: #374151;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            word-break: break-word;
+            min-height: 200px;
+        }
+
+        .state-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 36px;
+            color: #9aa1b1;
+            gap: 10px;
+        }
+
+            .state-box .icon {
+                font-size: 36px;
+            }
+
+            .state-box p {
+                font-size: 14px;
+            }
+
+        /* ===== MODAL CHUNG ===== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.4);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+            .modal-overlay.open {
+                display: flex;
+            }
+
+        .modal {
+            background: #fff;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 540px;
+            padding: 32px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            font-family: 'Be Vietnam Pro', sans-serif;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a2340;
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+            .form-group label {
+                display: block;
+                font-size: 13px;
+                font-weight: 600;
+                color: #374151;
+                margin-bottom: 6px;
+            }
+
+            .form-group input, .form-group textarea {
+                width: 100%;
+                padding: 10px 14px;
+                border: 1px solid #e5e7eb;
+                border-radius: 8px;
+                font-size: 14px;
+                color: #1a2340;
+                font-family: 'Be Vietnam Pro', sans-serif;
+                outline: none;
+                transition: border-color 0.15s;
+                resize: vertical;
+                box-sizing: border-box;
+            }
+
+                .form-group input:focus, .form-group textarea:focus {
+                    border-color: #1e4db7;
+                }
+
+            .form-group textarea {
+                min-height: 100px;
+            }
+
+        .form-check {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #374151;
+            font-weight: 500;
+            margin-bottom: 24px;
+            cursor: pointer;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .btn-cancel {
+            padding: 9px 20px;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            background: #fff;
+            color: #374151;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Be Vietnam Pro', sans-serif;
+        }
+
+            .btn-cancel:hover {
+                background: #f9fafb;
+            }
+
+        .btn-submit {
+            padding: 9px 20px;
+            border-radius: 8px;
+            border: none;
+            background: #1e4db7;
+            color: #fff;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Be Vietnam Pro', sans-serif;
+            transition: background 0.15s;
+        }
+
+            .btn-submit:hover {
+                background: #1a3f9e;
+            }
+
+            .btn-submit:disabled {
+                background: #93aee8;
+                cursor: not-allowed;
+            }
+
+        /* Delete confirm modal */
+        .delete-icon {
+            text-align: center;
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .delete-msg {
+            text-align: center;
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+
+        .btn-confirm-delete {
+            padding: 9px 20px;
+            border-radius: 8px;
+            border: none;
+            background: #dc2626;
+            color: #fff;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Be Vietnam Pro', sans-serif;
+            transition: background 0.15s;
+        }
+
+            .btn-confirm-delete:hover {
+                background: #b91c1c;
+            }
+
+            .btn-confirm-delete:disabled {
+                background: #fca5a5;
+                cursor: not-allowed;
+            }
+    </style>
+</head>
+<body>
+    <header class="topbar">
+        <div class="left-top">
+            <button id="toggleBtn" class="menu-btn">☰</button>
+            <div class="logo">
+                <img src="logo.png" height="35">
+                <span>On campus Dormitory</span>
+            </div>
+        </div>
+        <div class="right-menu">
+            <button class="campus-btn">Hòa Lạc</button>
+        </div>
+    </header>
+
+    <div class="layout">
+        <aside id="sidebar" class="sidebar">
+            <ul>
+                <li>🏠 Home</li>
+                <li class="active" onclick="window.location.href='news.html'">📰 News</li>
+                <li>🛏 Room history</li>
+                <li>📅 Bookings</li>
+                <li>💡 Electricity water</li>
+                <li onclick="window.location.href='payment.html'">💳 Payment history</li>
+                <li onclick="window.location.href='my_request.html'">📩 My request</li>
+                <li>🚗 Parking ticket</li>
+                <li>📘 User guide</li>
+                <li>❓ FAQ</li>
+            </ul>
+            <button class="logout-btn">Đăng xuất</button>
+        </aside>
+
+        <main id="content" class="content">
+            <div class="top-bar">
+                <a class="back-btn" href="news.html">← Quay lại danh sách</a>
+                <div class="action-btns">
+                    <button id ="btn-edit" class="btn-edit" onclick="openEditModal()">✏️ Chỉnh sửa</button>
+                    <button id ="btn-delete" class="btn-delete" onclick="openDeleteModal()">🗑️ Xóa</button>
+                </div>
+            </div>
+            <div id="detail-container"></div>
+        </main>
+    </div>
+
+    <!-- Modal Chỉnh sửa -->
+    <div class="modal-overlay" id="editModal">
+        <div class="modal">
+            <div class="modal-title">✏️ Chỉnh sửa thông báo</div>
+            <div class="form-group">
+                <label>Tiêu đề <span style="color:#ef4444">*</span></label>
+                <input type="text" id="edit-title" placeholder="Nhập tiêu đề...">
+                <div class="field-error" id="err-title"> Tiêu đề không được để trống</div>
+            </div>
+            <div class="form-group">
+                <label>Tóm tắt</label>
+                <input type="text" id="edit-summary" placeholder="Mô tả ngắn gọn...">
+                <div class="field-error" id="err-summary"> Mô tả ngắn không được để trống</div>
+            </div>
+            <div class="form-group">
+                <label>Nội dung <span style="color:#ef4444">*</span></label>
+                <textarea id="edit-content" maxlength="500" placeholder="Nhập nội dung..." oninput="updateCounter('edit-content','edit-counter')"></textarea>
+                <div class="char-counter" id="edit-counter">0 / 500</div>
+                <div class="field-error" id="err-content"> Nội dung không được để trống</div>
+            </div>
+            <label class="form-check">
+                <input type="checkbox" id="edit-important">
+                Đánh dấu quan trọng ⭐
+            </label>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeEditModal()">Hủy</button>
+                <button class="btn-submit" id="btn-save" onclick="submitEdit()">Lưu thay đổi</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Xóa -->
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal">
+            <div class="delete-icon">🗑️</div>
+            <div class="modal-title" style="text-align:center">Xác nhận xóa</div>
+            <p class="delete-msg">Bạn có chắc muốn xóa thông báo này không?<br>Thao tác này không thể hoàn tác.</p>
+            <div class="modal-actions" style="justify-content:center">
+                <button class="btn-cancel" onclick="closeDeleteModal()">Hủy</button>
+                <button class="btn-confirm-delete" id="btn-confirm-del" onclick="submitDelete()">Xác nhận xóa</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/app.js"></script>
+    <script>
+        let currentData = null;
+
+        function getInitials(name) {
+            return name.split(' ').slice(-2).map(w => w[0]).join('').toUpperCase();
+        }
+        function formatDate(date) {
+            return new Date(date).toLocaleDateString('vi-VN', {
+                day: '2-digit', month: '2-digit', year: 'numeric',
+                hour: '2-digit', minute: '2-digit'
+            });
+        }
+        function getIdFromUrl() {
+            return new URLSearchParams(window.location.search).get('id');
+        }
+
+        // ===== LOAD DETAIL =====
+        function renderDetail(data) {
+            currentData = data;
+            document.title = data.title + ' - Thông báo';
+            return `
+                <div class="detail-card">
+                    <div class="detail-card-header">
+                        <div class="detail-badge">Thông báo</div>${data.isImportant ? '<span class="detail-badge-important">⭐ Quan trọng</span>' : ''}
+                        <h1 class="detail-title">${data.title}</h1>
+                    </div>
+                    <div class="detail-meta">
+                        <div class="meta-avatar">${getInitials(data.createdByName)}</div>
+                        <div>
+                            <div class="meta-name">${data.createdByName}</div>
+                            <div class="meta-date">${formatDate(data.createdDate)}</div>
+                        </div>
+                    </div>
+                    <div class="detail-body">${data.content ?? 'Không có nội dung.'}</div>
+                </div>`;
+        }
+
+        function renderError() {
+            return `<div class="detail-card"><div class="state-box"><div class="icon">⚠️</div><p>Không tìm thấy thông báo này.</p></div></div>`;
+        }
+
+        function loadDetail() {
+            const id = getIdFromUrl();
+            const container = document.getElementById('detail-container');
+            if (!id) { container.innerHTML = renderError(); return; }
+
+            container.innerHTML = `<div class="detail-card"><div class="state-box"><div class="icon">⏳</div><p>Đang tải...</p></div></div>`;
+
+            fetch(`/api/news/${id}`)
+                .then(res => { if (!res.ok) throw new Error(); return res.json(); })
+                .then(data => { container.innerHTML = renderDetail(data); })
+                .catch(() => { container.innerHTML = renderError(); });
+        }
+
+        function updateCounter(textareaId, counterId) {
+            const len = document.getElementById(textareaId).value.length;
+            const el = document.getElementById(counterId);
+            el.textContent = len + ' / 500';
+            el.className = 'char-counter' + (len >= 500 ? ' over' : len >= 400 ? ' warn' : '');
+        }
+
+        // ===== EDIT =====
+        function openEditModal() {
+            if (!currentData) return;
+            document.getElementById('edit-title').value = currentData.title ?? '';
+            document.getElementById('edit-summary').value = currentData.summary ?? '';
+            document.getElementById('edit-content').value = currentData.content ?? '';
+            document.getElementById('edit-important').checked = currentData.isImportant ?? false;
+            updateCounter('edit-content', 'edit-counter');
+            clearErrors(['edit-title', 'edit-content', 'edit-summary']);
+            document.getElementById('editModal').classList.add('open');
+        }
+        function closeEditModal() {
+            document.getElementById('editModal').classList.remove('open');
+        }
+        function showError(inputId, errorId) {
+            document.getElementById(inputId).classList.add('error');
+            document.getElementById(errorId).classList.add('show');
+        }
+        function clearErrors(ids) {
+            ids.forEach(id => {
+                document.getElementById(id).classList.remove('error');
+            });
+            document.querySelectorAll('.field-error').forEach(el => el.classList.remove('show'));
+        }
+        function submitEdit() {
+            const titleEl = document.getElementById('edit-title');
+            const contentEl = document.getElementById('edit-content');
+            const summaryEl = document.getElementById('edit-summary');
+            const title = titleEl.value.trim();
+            const content = contentEl.value.trim();
+            const summary = summaryEl.value.trim();
+
+            clearErrors(['edit-title', 'edit-content', 'edit-summary']);
+            let valid = true;
+            if (!title) { showError('edit-title', 'err-title'); valid = false; }
+            if (!content) { showError('edit-content', 'err-content'); valid = false; }
+            if (!summary) { showError('edit-summary', 'err-summary'); valid = false }
+            if (!valid) return;
+
+            const btn = document.getElementById('btn-save');
+            btn.disabled = true; btn.textContent = 'Đang lưu...';
+
+            fetch(`/api/news/${getIdFromUrl()}`, {
+                method: 'PUT',
+                headers: authHeaders(),
+                body: JSON.stringify({
+                    title,
+                    summary: document.getElementById('edit-summary').value.trim(),
+                    content,
+                    isImportant: document.getElementById('edit-important').checked
+                })
+            })
+                .then(res => { if (!res.ok) throw new Error(); closeEditModal(); loadDetail(); })
+                .catch(() => alert('Bạn không có quyền thực hiện hành động này!'))
+                .finally(() => { btn.disabled = false; btn.textContent = 'Lưu thay đổi'; });
+        }
+
+        // ===== DELETE =====
+        function openDeleteModal() {
+            document.getElementById('deleteModal').classList.add('open');
+        }
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.remove('open');
+        }
+        function submitDelete() {
+            const btn = document.getElementById('btn-confirm-del');
+            btn.disabled = true; btn.textContent = 'Đang xóa...';
+
+            fetch(`/api/news/${getIdFromUrl()}`, { method: 'DELETE', headers: authHeaders() })
+                .then(res => { if (!res.ok) throw new Error(); window.location.href = 'news.html'; })
+                .catch(() => { alert('Có lỗi xảy ra, vui lòng thử lại!'); btn.disabled = false; btn.textContent = 'Xác nhận xóa'; });
+        }
+
+        // Đóng modal khi click ra ngoài
+        ['editModal', 'deleteModal'].forEach(id => {
+            document.getElementById(id).addEventListener('click', function (e) {
+                if (e.target === this) this.classList.remove('open');
+            });
+        });
+        function isAdmin() {
+            return localStorage.getItem('role') == 1;
+        }
+        function authHeaders() {
+            return {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+            };
+        }
+        document.addEventListener("DOMContentLoaded", () => {
+            loadDetail()
+            fetch('/api/auth/me', {
+                headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
+            })
+                .then(res => res.json())
+                .then(data => {
+                    localStorage.setItem('role', data.role);
+                    if (!isAdmin()) {
+                        document.getElementById('btn-add').style.display = 'none';
+                    }
+                });
+        });
+    </script>
+</body>
+</html>

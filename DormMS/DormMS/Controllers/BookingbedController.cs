@@ -23,7 +23,7 @@ namespace DormMS.Controllers
             _payOSService = payOSService;
         }
 
-        [HttpGet("student/{id}")]
+        [HttpGet("student/{id}")]   
         public async Task<IActionResult> GetStudentBookingbeds(int id)
         {
             var bookingbed = await _bookingbedService.GetStudentBookingbeds(id);
@@ -55,6 +55,18 @@ namespace DormMS.Controllers
 
             var roomOccupied = _context.Rooms.Where(x => x.RoomId == dto.RoomId).FirstOrDefault();
             roomOccupied.Occupied += 1;
+
+            var paymentEntity = new Payment
+            {
+                UserId = booking.UserId,
+                Amount = booking.TotalAmount,
+                Date = DateOnly.FromDateTime(DateTime.Now),
+                Method = "Online",
+                Description = "null nhe!",
+                Status = "Pending"
+            };
+
+            _context.Payments.Add(paymentEntity);
             await _context.SaveChangesAsync();
            
 
@@ -89,6 +101,17 @@ namespace DormMS.Controllers
 
             var roomOccupied = _context.Rooms.Where(x=> x.RoomId == dto.RoomId).FirstOrDefault();
             roomOccupied.Occupied += 1;
+            var paymentEntity = new Payment
+            {
+                UserId = booking.UserId,
+                Amount = booking.TotalAmount,
+                Date = DateOnly.FromDateTime(DateTime.Now),
+                Method= "Online",
+                Description= "null nhe!",
+                Status = "Pending"
+            };
+
+            _context.Payments.Add(paymentEntity);
             await _context.SaveChangesAsync();
 
             // 2️⃣ Tạo link thanh toán PayOS
@@ -222,6 +245,16 @@ namespace DormMS.Controllers
 
             _context.Allotments.Add(newAllot);
 
+
+
+
+            var payment = await _context.Payments
+    .FirstOrDefaultAsync(x => x.UserId == booking.UserId);
+
+            if (payment != null)
+            {
+                payment.Status = "Paid";
+            }
             // ✅ Lưu DB
             await _context.SaveChangesAsync();
 
@@ -250,11 +283,26 @@ namespace DormMS.Controllers
         {
 
             var bookingbedId = _context.BookingBeds.Where(x => x.BookingId == orderCode).FirstOrDefault();
-            if(bookingbedId != null)
+            if (bookingbedId != null)
             {
                 _context.Remove(bookingbedId);
-                _context.SaveChanges();
+
+
+
+
+                var payment = await _context.Payments
+                    .FirstOrDefaultAsync(x => x.UserId == bookingbedId.UserId);
+
+                if (payment != null)
+                {
+                    _context.Payments.Remove(payment);
+                }
+
+
+
+                await _context.SaveChangesAsync();
             }
+            
             // Xử lý khi người dùng nhấn "Hủy thanh toán" trên giao diện PayOS
             return Ok(new
             {
