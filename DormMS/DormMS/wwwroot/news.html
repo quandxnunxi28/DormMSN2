@@ -47,7 +47,7 @@
             </div>
             <div class="section-header">
                 <div class="section-title">Tất cả thông báo</div>
-                <button id="btn-add" class="btn-add" onclick="openCreateModal()">+ Thêm thông báo</button>
+                <button id="btn-add-news" class="btn-add" style="display: none;" onclick="openCreateModal()">+ Thêm thông báo</button>
             </div>
             <div class="search-box">
                 <span class="search-icon">🔍</span>
@@ -245,9 +245,6 @@
         document.getElementById('createModal').addEventListener('click', function (e) {
             if (e.target === this) closeCreateModal();
         });
-        function isAdmin() {
-            return localStorage.getItem('role') == 1;
-        }
         function authHeaders() {
             return {
                 'Content-Type': 'application/json',
@@ -262,9 +259,6 @@
             setTimeout(() => toast.remove(), 3000); // tự mất sau 3 giây
         }
         document.addEventListener("DOMContentLoaded", () => {
-            if (!isAdmin()) {
-                document.getElementById('btn-add').style.display = 'none';
-            }
             loadNews();
         });
     </script>

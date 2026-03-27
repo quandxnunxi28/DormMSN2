@@ -44,8 +44,8 @@
             <div class="top-bar">
                 <a class="back-btn" href="news.html">← Quay lại danh sách</a>
                 <div class="action-btns">
-                    <button id ="btn-edit" class="btn-edit" onclick="openEditModal()">✏️ Chỉnh sửa</button>
-                    <button id ="btn-delete" class="btn-delete" onclick="openDeleteModal()">🗑️ Xóa</button>
+                    <button id ="btn-edit-news" class="btn-edit" style="display: none;" onclick="openEditModal()">✏️ Chỉnh sửa</button>
+                    <button id ="btn-delete-news" class="btn-delete" style="display: none;" onclick="openDeleteModal()">🗑️ Xóa</button>
                 </div>
             </div>
             <div id="detail-container"></div>
@@ -243,9 +243,12 @@
                         const err = await res.json();
                         throw new Error(err.message);
                     }
-                    const data = await res.json();
-                    window.location.href = 'news.html';
+                    const data = await res.json()
+                    closeDeleteModal();
                     showToast(data.message, 'success');
+                    setTimeout(() => {
+                        window.location.href = 'news.html';
+                    }, 1000);
                 })
                 .catch((err) => { showToast(err.message,'error'); btn.disabled = false; btn.textContent = 'Xác nhận xóa'; });
         }

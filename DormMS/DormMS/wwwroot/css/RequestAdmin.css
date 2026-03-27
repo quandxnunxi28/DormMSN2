@@ -287,3 +287,36 @@
     border: 1px solid #dbeafe;
     transition: background 0.15s;
 }
+.toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    z-index: 9999;
+    animation: fadeIn 0.3s ease;
+    font-family: 'Be Vietnam Pro', sans-serif;
+}
+
+    .toast.success {
+        background: #16a34a;
+    }
+
+    .toast.error {
+        background: #dc2626;
+    }
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
