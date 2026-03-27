@@ -1,0 +1,113 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\admin\\Documents\\k\u00EC 8\\PRN_Project\\DormMSN2\\DormMS\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{1B14B86A-645C-B31C-9B6D-1F93ED3D300B}|DormMS\\DormMS.csproj|c:\\users\\admin\\documents\\k\u00EC 8\\prn_project\\dormmsn2\\dormms\\dormms\\wwwroot\\js\\app.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{1B14B86A-645C-B31C-9B6D-1F93ED3D300B}|DormMS\\DormMS.csproj|solutionrelative:dormms\\wwwroot\\js\\app.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1B14B86A-645C-B31C-9B6D-1F93ED3D300B}|DormMS\\DormMS.csproj|c:\\users\\admin\\documents\\k\u00EC 8\\prn_project\\dormmsn2\\dormms\\dormms\\wwwroot\\student.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{1B14B86A-645C-B31C-9B6D-1F93ED3D300B}|DormMS\\DormMS.csproj|solutionrelative:dormms\\wwwroot\\student.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1B14B86A-645C-B31C-9B6D-1F93ED3D300B}|DormMS\\DormMS.csproj|c:\\users\\admin\\documents\\k\u00EC 8\\prn_project\\dormmsn2\\dormms\\dormms\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1B14B86A-645C-B31C-9B6D-1F93ED3D300B}|DormMS\\DormMS.csproj|solutionrelative:dormms\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1B14B86A-645C-B31C-9B6D-1F93ED3D300B}|DormMS\\DormMS.csproj|c:\\users\\admin\\documents\\k\u00EC 8\\prn_project\\dormmsn2\\dormms\\dormms\\wwwroot\\login.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{1B14B86A-645C-B31C-9B6D-1F93ED3D300B}|DormMS\\DormMS.csproj|solutionrelative:dormms\\wwwroot\\login.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1B14B86A-645C-B31C-9B6D-1F93ED3D300B}|DormMS\\DormMS.csproj|c:\\users\\admin\\documents\\k\u00EC 8\\prn_project\\dormmsn2\\dormms\\dormms\\wwwroot\\news_detail.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{1B14B86A-645C-B31C-9B6D-1F93ED3D300B}|DormMS\\DormMS.csproj|solutionrelative:dormms\\wwwroot\\news_detail.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 2,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "app.js",
+              "DocumentMoniker": "C:\\Users\\admin\\Documents\\k\u00EC 8\\PRN_Project\\DormMSN2\\DormMS\\DormMS\\wwwroot\\js\\app.js",
+              "RelativeDocumentMoniker": "DormMS\\wwwroot\\js\\app.js",
+              "ToolTip": "C:\\Users\\admin\\Documents\\k\u00EC 8\\PRN_Project\\DormMSN2\\DormMS\\DormMS\\wwwroot\\js\\app.js",
+              "RelativeToolTip": "DormMS\\wwwroot\\js\\app.js",
+              "ViewState": "AgIAAAwAAAAAAAAAAAAAABoAAAAxAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
+              "WhenOpened": "2026-03-27T10:11:32.034Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "student.html",
+              "DocumentMoniker": "C:\\Users\\admin\\Documents\\k\u00EC 8\\PRN_Project\\DormMSN2\\DormMS\\DormMS\\wwwroot\\student.html",
+              "RelativeDocumentMoniker": "DormMS\\wwwroot\\student.html",
+              "ToolTip": "C:\\Users\\admin\\Documents\\k\u00EC 8\\PRN_Project\\DormMSN2\\DormMS\\DormMS\\wwwroot\\student.html",
+              "RelativeToolTip": "DormMS\\wwwroot\\student.html",
+              "ViewState": "AgIAAHgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
+              "WhenOpened": "2026-03-27T10:11:26.41Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Login.html",
+              "DocumentMoniker": "C:\\Users\\admin\\Documents\\k\u00EC 8\\PRN_Project\\DormMSN2\\DormMS\\DormMS\\wwwroot\\Login.html",
+              "RelativeDocumentMoniker": "DormMS\\wwwroot\\Login.html",
+              "ToolTip": "C:\\Users\\admin\\Documents\\k\u00EC 8\\PRN_Project\\DormMSN2\\DormMS\\DormMS\\wwwroot\\Login.html",
+              "RelativeToolTip": "DormMS\\wwwroot\\Login.html",
+              "ViewState": "AgIAAHQAAAAAAAAAAAAAwIUAAAAtAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
+              "WhenOpened": "2026-03-27T09:47:09.642Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "AuthController.cs",
+              "DocumentMoniker": "C:\\Users\\admin\\Documents\\k\u00EC 8\\PRN_Project\\DormMSN2\\DormMS\\DormMS\\Controllers\\AuthController.cs",
+              "RelativeDocumentMoniker": "DormMS\\Controllers\\AuthController.cs",
+              "ToolTip": "C:\\Users\\admin\\Documents\\k\u00EC 8\\PRN_Project\\DormMSN2\\DormMS\\DormMS\\Controllers\\AuthController.cs",
+              "RelativeToolTip": "DormMS\\Controllers\\AuthController.cs",
+              "ViewState": "AgIAAFgAAAAAAAAAAAAAAGkAAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-27T09:47:04.194Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "news_detail.html",
+              "DocumentMoniker": "C:\\Users\\admin\\Documents\\k\u00EC 8\\PRN_Project\\DormMSN2\\DormMS\\DormMS\\wwwroot\\news_detail.html",
+              "RelativeDocumentMoniker": "DormMS\\wwwroot\\news_detail.html",
+              "ToolTip": "C:\\Users\\admin\\Documents\\k\u00EC 8\\PRN_Project\\DormMSN2\\DormMS\\DormMS\\wwwroot\\news_detail.html",
+              "RelativeToolTip": "DormMS\\wwwroot\\news_detail.html",
+              "ViewState": "AgIAAP0AAAAAAAAAAADwvxUBAAA9AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
+              "WhenOpened": "2026-03-27T09:38:54.898Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

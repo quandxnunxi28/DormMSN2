@@ -276,10 +276,6 @@
             setTimeout(() => toast.remove(), 3000); // tự mất sau 3 giây
         }
         document.addEventListener("DOMContentLoaded", () => {
-            if (!isAdmin()) {
-                document.getElementById('btn-edit').style.display = 'none';
-                document.getElementById('btn-delete').style.display = 'none';
-            }
             loadDetail();
         });
     </script>

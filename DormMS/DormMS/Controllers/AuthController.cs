@@ -112,7 +112,7 @@ namespace DormMS.Controllers
 
             return Ok(new
             {
-                token,
+                token,      
                 fullName = user.Name,
                 role = user.RoleNavigation.RoleName
             });

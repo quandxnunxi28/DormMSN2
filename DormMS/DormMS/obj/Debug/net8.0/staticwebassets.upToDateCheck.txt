@@ -1,0 +1,17 @@
+wwwroot\css\Home.css
+wwwroot\css\Login.css
+wwwroot\css\MyRequest.css
+wwwroot\css\News.css
+wwwroot\css\NewsDetail.css
+wwwroot\css\Payment.css
+wwwroot\css\RequestAdmin.css
+wwwroot\Home.html
+wwwroot\js\app.js
+wwwroot\Login.html
+wwwroot\my_request.html
+wwwroot\news.html
+wwwroot\otp.html
+wwwroot\payment.html
+wwwroot\request_admin.html
+wwwroot\student.html
+wwwroot\news_detail.html
