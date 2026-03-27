@@ -17,6 +17,26 @@ namespace DormMS.Controllers
             _context = context;
         }
 
+        [HttpGet("top-5")]
+        public IActionResult GetTop5()
+        {
+            var data = _context.News
+                .Where(x => x.Status == "ACTIVE")
+                .OrderByDescending(x => x.CreatedDate)
+                .Select( x=> new
+                {
+                    x.Title,
+                    x.CreatedDate,
+                    CreatedByName = _context.HostelUsers
+                                    .Where(u => x.CreatedBy == u.UserId)
+                                    .Select(u => u.Name)
+                                    .FirstOrDefault()
+                })
+                .Take(5)
+                .ToList();
+            return Ok(data);
+        }
+
         [HttpGet]
         public IActionResult GetAll([FromQuery] int page = 1,
                                     [FromQuery] int pageSize = 6, 

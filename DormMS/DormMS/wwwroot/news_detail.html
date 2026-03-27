@@ -25,17 +25,13 @@
     <div class="layout">
         <aside id="sidebar" class="sidebar">
             <ul>
-                <li>🏠 Home</li>
+                <li onclick="window.location.href='student.html'">>🏠 Home</li>
                 <li class="active" onclick="window.location.href='news.html'">📰 News</li>
-                <li><a href="BookingHistory.html">🛏 Booking history--</a></li>
-                <li><a href="BookingBed.html">📅 Bookings</a></li>
-                <li>💡 Electricity water</li>
+                <li onclick="window.location.href='BookingHistory.html'">🛏 Booking history--</a></li>
+                <li onclick="window.location.href='BookingBed.html'">📅 Bookings</a></li>
                 <li onclick="window.location.href='payment.html'">💳 Payment history</li>
                 <li onclick="window.location.href='my_request.html'">📩 My request</li>
                 <li id="adminMenu" style="display: none;" onclick="window.location.href='request_admin.html'">📩 Manage request</li>
-                <li>🚗 Parking ticket</li>
-                <li>📘 User guide</li>
-                <li>❓ FAQ</li>
             </ul>
             <button class="logout-btn">Đăng xuất</button>
         </aside>
@@ -277,10 +273,6 @@
             setTimeout(() => toast.remove(), 3000); // tự mất sau 3 giây
         }
         document.addEventListener("DOMContentLoaded", () => {
-            if (!isAdmin()) {
-                document.getElementById('btn-edit').style.display = 'none';
-                document.getElementById('btn-delete').style.display = 'none';
-            }
             loadDetail();
         });
     </script>
