@@ -1,0 +1,93 @@
+﻿<!DOCTYPE html>
+
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Thanh toán thành công</title>
+    <link rel="stylesheet" href="payment.css">
+</head>
+<body class="success-bg">
+
+    <div class="card">
+        <div class="icon success-icon">✔</div>
+        <h1>Thanh toán thành công</h1>
+
+        ```
+        <div class="info">
+            <p><strong>Mã đơn:</strong> <span id="orderCode"></span></p>
+            <p><strong>Trạng thái:</strong> Thành công</p>
+            <p><strong>Thời gian:</strong> <span id="time"></span></p>
+        </div>
+
+        <div class="actions">
+            <button class="btn success-btn" onclick="goHome()">Trang chủ</button>
+            <button class="btn success-btn" onclick="viewHistory()">Xem lịch sử</button>
+        </div>
+        ```
+
+    </div>
+
+   
+        <script>
+            const params = new URLSearchParams(window.location.search);
+
+            const orderCode = params.get("orderCode");
+            const code = params.get("code");
+            const status = params.get("status");
+
+            document.getElementById("orderCode").innerText = orderCode || "N/A";
+            document.getElementById("time").innerText = new Date().toLocaleString();
+
+            const BASE_URL = "https://localhost:7088";
+
+            async function handlePayment() {
+        if (!orderCode) {
+                alert("Thiếu orderCode!");
+            return;
+        }
+
+            // ❗ check thêm status từ PayOS
+            if (status !== "PAID" && code !== "00") {
+                document.querySelector(".card").innerHTML = `
+                <h2>❌ Thanh toán thất bại</h2>
+                <p>Vui lòng thử lại</p>
+            `;
+            return;
+        }
+
+            try {
+            const res = await fetch(
+            `${BASE_URL}/api/bookingbed/payment-success?code=${code}&orderCode=${orderCode}`
+            );
+
+            const data = await res.json();
+
+            if (data.status !== "Success") {
+                document.querySelector(".card").innerHTML = `
+                    <h2>❌ Lỗi cập nhật hệ thống</h2>
+                `;
+            }
+
+        } catch (err) {
+                console.error(err);
+            document.querySelector(".card").innerHTML = `
+            <h2>❌ Lỗi server</h2>
+            `;
+        }
+}
+
+            // 👉 gọi khi load trang
+            handlePayment();
+
+            function goHome() {
+                window.location.href = BASE_URL + "/student.html";
+}
+
+            function viewHistory() {
+                window.location.href = BASE_URL + "/BookingBed.html";
+}
+    </script>
+    
+
+</body>
+</html>

@@ -1,0 +1,172 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin - Expired Users</title>
+
+    <link rel="stylesheet" href="/css/Home.css">
+    <link rel="stylesheet" href="/css/adminExpired.css">
+</head>
+<body>
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+        <div class="left-top">
+            <button id="toggleBtn" class="menu-btn">☰</button>
+            <div class="logo">
+                <img src="logo.png" height="35">
+                <span>On campus Dormitory</span>
+            </div>
+        </div>
+
+        <div class="right-menu">
+            <button class="campus-btn">Hòa Lạc</button>
+        </div>
+    </header>
+
+    <div class="layout">
+
+        <!-- SIDEBAR -->
+        <aside id="sidebar" class="sidebar">
+            <ul>
+                <li class="active"><a href="/student.html">🏠 Home</a></li>
+                <li onclick="window.location.href='news.html'">📰 News</li>
+                <li><a href="BookingHistory.html">🛏 Booking history--</a></li>
+                <li><a href="BookingBed.html">📅 Bookings</a></li>
+                <li>💡 Electricity water--</li>
+                <li onclick="window.location.href='payment.html'">💳 Payment history</li>
+                <li onclick="window.location.href='my_request.html'">📩 My request</li>
+                <li>🚗 Parking ticket--</li>
+                <li>📘 User guide--</li>
+                <li>❓ FAQ--</li>
+            </ul>
+
+            <button class="logout-btn">Đăng xuất</button>
+        </aside>
+
+        <!-- CONTENT -->
+        <main id="content" class="content">
+            <div class="booking-wrapper">
+
+                <h1 class="booking-title">⚙️ Quản lý sinh viên hết hạn</h1>
+
+                <!-- ACTION -->
+                <div class="action-bar">
+                    <button class="btn reload" onclick="loadExpired()">🔄 Tải danh sách</button>
+                    <button class="btn delete" onclick="deleteExpired()">🗑 Xóa tất cả</button>
+                </div>
+
+                <!-- TABLE -->
+                <div class="table-box">
+                    <table class="booking-table">
+                        <thead>
+                            <tr>
+                                <th>User ID</th>
+                                <th>Room ID</th>
+                                <th>Allot Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="expiredBody">
+                            <tr>
+                                <td colspan="4" class="empty">   load dữ liệu</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </main>
+
+    </div>
+
+    <!-- JS -->
+    <script>
+        async function loadExpired() {
+            const token = localStorage.getItem("token");
+            if (token == null) {
+                alert("Bạn chưa đăng nhập");
+                return;
+            }
+            const tbody = document.getElementById("expiredBody");
+
+            tbody.innerHTML = `<tr><td colspan="4" class="empty">Đang tải...</td></tr>`;
+
+            try {
+                const res = await fetch("/api/bookingbed/expired-users", {
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    }
+                });
+
+                if (!res.ok) {
+                    tbody.innerHTML = `<tr><td colspan="4" class="empty">Lỗi tải dữ liệu</td></tr>`;
+                    return;
+                }
+
+                const data = await res.json();
+
+                if (data.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="4" class="empty">Không có sinh viên hết hạn</td></tr>`;
+                    return;
+                }
+
+                let html = "";
+
+                data.forEach(x => {
+                    html += `
+                                    <tr class="expired-row">
+                                        <td>${x.userId}</td>
+                                        <td>${x.roomId}</td>
+                                        <td>${formatDate(x.allotDate)}</td>
+                                        <td class="status-expired">Hết hạn</td>
+                                    </tr>
+                                `;
+                });
+
+                tbody.innerHTML = html;
+
+            } catch (err) {
+                console.error(err);
+                tbody.innerHTML = `<tr><td colspan="4" class="empty">Lỗi hệ thống</td></tr>`;
+            }
+        }
+
+        async function deleteExpired() {
+            if (!confirm("Xóa toàn bộ sinh viên hết hạn?")) return;
+            const token = localStorage.getItem("token");
+            if (token == null) {
+                alert("Bạn chưa đăng nhập");
+                return;
+            };
+
+            try {
+                const res = await fetch("/api/bookingbed/delete-expired", {
+                    method: "DELETE",
+                    headers: {
+                        "Authorization": "Bearer " + token 
+                    }
+                });
+
+                if (!res.ok) {
+                    alert("Không có quyền hoặc lỗi");
+                    return;
+                }
+
+                alert("Đã xóa thành công");
+                loadExpired();
+
+            } catch (err) {
+                console.error(err);
+                alert("Lỗi khi xóa");
+            }
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return "";
+            return new Date(dateStr).toLocaleDateString("vi-VN");
+        }
+    </script>
+
+</body>
+</html>

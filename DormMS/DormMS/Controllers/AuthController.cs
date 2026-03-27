@@ -16,6 +16,7 @@ namespace DormMS.Controllers
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
+        private static Dictionary<string, string> resetTokenStorage = new();
         private static Dictionary<string, string> otpStorage = new();
         private static Dictionary<string, RegisterDto> registerStorage = new();
         private readonly DormMsnContext _context;
@@ -262,6 +263,81 @@ namespace DormMS.Controllers
             });
         }
 
+        [HttpPost("send-forgot-password")]
+        public IActionResult SendForgotPass([FromBody] string email)
+        {
+            var user = _context.HostelUsers.FirstOrDefault(x => x.Email == email);
+
+            if (user == null)
+                return BadRequest(new { message = "Email không tồn tại" });
+
+            // tạo token
+            var token = Guid.NewGuid().ToString();
+
+            resetTokenStorage[token] = email;
+
+            var resetLink = $"https://localhost:7088/reset-password.html?token={token}";
+
+            var emailService = new EmailService();
+            emailService.SendEmail(email, "Reset Password",
+                $"Click vào link để đổi mật khẩu: {resetLink}");
+
+            return Ok(new { message = "Đã gửi link reset password" });
+        }
+
+        [HttpPost("forgot-password")]
+        public IActionResult ForgotPass([FromBody] ResetPasswordDto dto)
+        {
+            if (!resetTokenStorage.ContainsKey(dto.Token))
+                return BadRequest(new { message = "Token không hợp lệ hoặc hết hạn" });
+
+            var email = resetTokenStorage[dto.Token];
+
+            var user = _context.HostelUsers.FirstOrDefault(x => x.Email == email);
+
+            if (user == null)
+                return NotFound();
+
+            // check password mạnh
+            if (!IsStrongPassword(dto.NewPassword))
+            {
+                return BadRequest(new
+                {
+                    field = "password",
+                    message = "Mật khẩu không đủ mạnh"
+                });
+            }
+            if(user.Password.Equals(""))
+            {
+                return BadRequest(new
+                {
+                    field = "password",
+                    message = "Tài khoản của bạn chỉ được đăng nhập bằng gmail!"
+                });
+            }
+            else
+            {
+                if (BCrypt.Net.BCrypt.Verify(dto.NewPassword, user.Password))
+                {
+                    return BadRequest(new
+                    {
+                        field = "password",
+                        message = "Mật khẩu mới không được trùng mật khẩu cũ!"
+                    });
+                }
+                user.Password = BCrypt.Net.BCrypt.HashPassword(dto.NewPassword);
+            }
+
+            
+            
+
+            _context.SaveChanges();
+
+            resetTokenStorage.Remove(dto.Token);
+
+            return Ok(new { message = "Đổi mật khẩu thành công" });
+        }
+
         private string GenerateJwt(HostelUser user)
         {
             var claims = new[]
@@ -283,5 +359,7 @@ namespace DormMS.Controllers
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
+
     }
 }
