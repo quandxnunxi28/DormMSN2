@@ -90,7 +90,8 @@ public partial class DormMsnContext : DbContext
             entity.Property(e => e.ComplaintId).HasColumnName("complaint_id");
             entity.Property(e => e.DateFiled).HasColumnName("date_filed");
             entity.Property(e => e.Issue)
-                .HasColumnType("text")
+                    .IsUnicode(true)
+                    .HasMaxLength(50)
                 .HasColumnName("issue");
             entity.Property(e => e.RoomId).HasColumnName("room_id");
             entity.Property(e => e.Status)
