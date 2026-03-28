@@ -2,6 +2,7 @@
 using DormMS.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using PayOS.Models.Webhooks;
 using System.Net.NetworkInformation;
@@ -16,11 +17,13 @@ namespace DormMS.Controllers
         private readonly IBookingbedService _bookingbedService;
         private readonly DormMsnContext _context;
         private readonly IPayOSService _payOSService;
-        public BookingbedController(IBookingbedService bookingbedService, DormMsnContext context, IPayOSService payOSService)
+        private readonly IHubContext<NotificationHub> _hubContext;
+        public BookingbedController(IBookingbedService bookingbedService, DormMsnContext context, IPayOSService payOSService, IHubContext<NotificationHub> hubContext)
         {
             _bookingbedService = bookingbedService;
-            _context = context;
+            _context = context; 
             _payOSService = payOSService;
+            _hubContext = hubContext;
         }
 
         [HttpGet("student/{id}")]
@@ -99,8 +102,9 @@ namespace DormMS.Controllers
 
             _context.BookingBeds.Add(booking);
 
-            var roomOccupied = _context.Rooms.Where(x => x.RoomId == dto.RoomId).FirstOrDefault();
-            roomOccupied.Occupied += 1;
+           
+            
+            
             var paymentEntity = new Payment
             {
                 UserId = booking.UserId,
@@ -216,6 +220,12 @@ namespace DormMS.Controllers
                 {
                     paymentId.Status = "Paid";
                 }
+
+                await _hubContext.Clients.User(booking.UserId.ToString())
+.SendAsync(
+    "ReceiveNotification", // tên event bên JS
+    "🎉 Thanh toán thành công! Phòng đã được xác nhận."
+);
             }
             else
             {
@@ -240,6 +250,21 @@ namespace DormMS.Controllers
                     Status = "Active"
                 };
                 _context.Allotments.Add(newAllot);
+
+                var payment = await _context.Payments
+.FirstOrDefaultAsync(x => x.UserId == booking.UserId);
+
+                if (payment != null)
+                {
+                    payment.Status = "Paid";
+                }
+                await _hubContext.Clients.User(booking.UserId.ToString())
+.SendAsync(
+"ReceiveNotification", // tên event bên JS
+"🎉 Thanh toán thành công! Phòng đã được xác nhận."
+);
+
+
             }
 
 
@@ -255,16 +280,15 @@ namespace DormMS.Controllers
 
 
 
-            var payment = await _context.Payments
-    .FirstOrDefaultAsync(x => x.UserId == booking.UserId);
 
-            if (payment != null)
-            {
-                payment.Status = "Paid";
-            }
+
+
             // ✅ Lưu DB
             await _context.SaveChangesAsync();
 
+
+
+        
             return Ok(new
             {
                 status = "Success",
@@ -290,11 +314,25 @@ namespace DormMS.Controllers
         {
 
             var bookingbedId = _context.BookingBeds.Where(x => x.BookingId == orderCode).FirstOrDefault();
+            var allotmentId = _context.Allotments.Where(x => x.UserId == bookingbedId.UserId).FirstOrDefault();
             if (bookingbedId != null)
             {
-                _context.Remove(bookingbedId);
+                
+                //nếu trong allotment vẫn còn kaka thì
+            if(allotmentId.UserId == null) {
+                    var roomId = _context.Rooms.Where(x => x.RoomId == bookingbedId.RoomId).FirstOrDefault();
+                if (roomId != null)
+                {
+                    roomId.Occupied -= 1;
+                    _context.SaveChanges();
+                } 
+                }
 
 
+                    
+                
+                
+                
 
 
                 var payment = await _context.Payments
@@ -306,6 +344,14 @@ namespace DormMS.Controllers
                 }
 
 
+                //thông báo 
+                await _hubContext.Clients.User(bookingbedId.UserId.ToString())
+        .SendAsync(
+            "ReceiveNotification",
+            "❌ Thanh toán đã bị hủy."
+        );
+                //xóa
+                _context.Remove(bookingbedId);
 
                 await _context.SaveChangesAsync();
             }
@@ -318,7 +364,7 @@ namespace DormMS.Controllers
                 orderCode = orderCode
             });
 
-            // HOẶC Redirect:
+            
             // return Redirect($"http://localhost:3000/payment-status?status=cancelled&orderId={orderCode}");
         }
 
@@ -355,7 +401,7 @@ namespace DormMS.Controllers
             {
                 var todayy = DateOnly.FromDateTime(DateTime.Now);
                 //222
-                DateOnly baseDate = new DateOnly(2025, 12, 2); // mốc kỳ đầu tiên
+                DateOnly baseDate = new DateOnly(2025, 12, 10); // mốc kỳ đầu tiên
                     
                 //DateOnly today = DateOnly.FromDateTime(DateTime.Now);
 
@@ -543,6 +589,28 @@ namespace DormMS.Controllers
                 .Where(x => x.AllotDate < nextCycle)
                 .ToListAsync();
 
+
+            var roomGroups = expired
+        .GroupBy(x => x.RoomId)
+        .Select(g => new
+        {
+            RoomId = g.Key,
+            Count = g.Count()
+        })
+        .ToList();
+            foreach (var group in roomGroups)
+            {
+                var room = await _context.Rooms.FindAsync(group.RoomId);
+                if (room != null)
+                {
+                    room.Occupied -= group.Count;
+
+                    // tránh âm
+                    if (room.Occupied < 0)
+                        room.Occupied = 0;
+                }
+            }
+
             _context.Allotments.RemoveRange(expired);
             await _context.SaveChangesAsync();
 
@@ -550,15 +618,39 @@ namespace DormMS.Controllers
         }
         [HttpGet("id")]
 
-        public async Task<IActionResult> test(int UserId)
+        public async Task<IActionResult> test()
         {
-var oldAllot = await _context.Allotments
-                .Where(x => x.UserId == UserId)
-                .OrderByDescending(x => x.AllotDate)
-                .FirstOrDefaultAsync();
-            return Ok(oldAllot);
+            DateOnly baseDate = new DateOnly(2025, 12, 10);
+            DateOnly today = DateOnly.FromDateTime(DateTime.Now);
+
+            int monthsDiff = ((today.Year - baseDate.Year) * 12 + today.Month - baseDate.Month);
+            int cycle = monthsDiff / 4;
+
+            DateOnly nextCycle = baseDate.AddMonths((cycle + 1) * 4);
+            var expired = await _context.Allotments
+               .Where(x => x.AllotDate < nextCycle)
+               .ToListAsync();
+
+            var roomGroups = expired
+                    .GroupBy(x => x.RoomId)
+                    .Select(g => new
+                    {
+                        RoomId = g.Key,
+                        Count = g.Count()
+                    })
+                    .ToList();
+            return Ok(roomGroups);
         }
-            
+
+        [HttpGet("test-signal")]
+        public async Task<IActionResult> TestSignal()
+        {
+            await _hubContext.Clients.All
+                .SendAsync("ReceiveNotification", "🔥 Test realtime nè!");
+
+            return Ok();
+        }
+
 
     }
 }

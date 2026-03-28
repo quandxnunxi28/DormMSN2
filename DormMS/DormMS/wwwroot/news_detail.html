@@ -40,8 +40,8 @@
             <div class="top-bar">
                 <a class="back-btn" href="news.html">← Quay lại danh sách</a>
                 <div class="action-btns">
-                    <button id ="btn-edit-news" class="btn-edit" style="display: none;" onclick="openEditModal()">✏️ Chỉnh sửa</button>
-                    <button id ="btn-delete-news" class="btn-delete" style="display: none;" onclick="openDeleteModal()">🗑️ Xóa</button>
+                    <button id="btn-edit-news" class="btn-edit" style="display: none;" onclick="openEditModal()">✏️ Chỉnh sửa</button>
+                    <button id="btn-delete-news" class="btn-delete" style="display: none;" onclick="openDeleteModal()">🗑️ Xóa</button>
                 </div>
             </div>
             <div id="detail-container"></div>
@@ -92,9 +92,11 @@
         </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
     <script src="/js/app.js"></script>
+    <script src="/js/signalr.js"></script>
     <script>
-        
+
         let currentData = null;
 
         function getInitials(name) {
@@ -115,20 +117,20 @@
             currentData = data;
             document.title = data.title + ' - Thông báo';
             return `
-                                        <div class="detail-card">
-                                            <div class="detail-card-header">
-                                                <div class="detail-badge">Thông báo</div>${data.isImportant ? '<span class="detail-badge-important">⭐ Quan trọng</span>' : ''}
-                                                <h1 class="detail-title">${data.title}</h1>
-                                            </div>
-                                            <div class="detail-meta">
-                                                <div class="meta-avatar">${getInitials(data.createdByName)}</div>
-                                                <div>
-                                                    <div class="meta-name">${data.createdByName}</div>
-                                                    <div class="meta-date">${formatDate(data.createdDate)}</div>
-                                                </div>
-                                            </div>
-                                            <div class="detail-body">${data.content ?? 'Không có nội dung.'}</div>
-                                        </div>`;
+                                                <div class="detail-card">
+                                                    <div class="detail-card-header">
+                                                        <div class="detail-badge">Thông báo</div>${data.isImportant ? '<span class="detail-badge-important">⭐ Quan trọng</span>' : ''}
+                                                        <h1 class="detail-title">${data.title}</h1>
+                                                    </div>
+                                                    <div class="detail-meta">
+                                                        <div class="meta-avatar">${getInitials(data.createdByName)}</div>
+                                                        <div>
+                                                            <div class="meta-name">${data.createdByName}</div>
+                                                            <div class="meta-date">${formatDate(data.createdDate)}</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="detail-body">${data.content ?? 'Không có nội dung.'}</div>
+                                                </div>`;
         }
 
         function renderError() {
@@ -247,8 +249,8 @@
                         window.location.href = 'news.html';
                     }, 1000);
                 })
-                .catch((err) => { showToast(err.message,'error'); btn.disabled = false; btn.textContent = 'Xác nhận xóa'; });
-        }   
+                .catch((err) => { showToast(err.message, 'error'); btn.disabled = false; btn.textContent = 'Xác nhận xóa'; });
+        }
 
         // Đóng modal khi click ra ngoài
         ['editModal', 'deleteModal'].forEach(id => {

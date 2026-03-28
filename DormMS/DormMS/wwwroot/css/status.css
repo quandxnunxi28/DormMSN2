@@ -1,0 +1,105 @@
+﻿/* RESET */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/* BACKGROUND */
+.success-bg {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #00c853, #69f0ae);
+}
+
+.cancel-bg {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #d50000, #ff8a80);
+}
+
+/* CARD */
+.card {
+    background: #fff;
+    padding: 35px 25px;
+    border-radius: 16px;
+    width: 350px;
+    text-align: center;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+/* ICON */
+.icon {
+    font-size: 55px;
+    margin-bottom: 10px;
+}
+
+.success-icon {
+    color: #00c853;
+}
+
+.cancel-icon {
+    color: #d50000;
+}
+
+/* TITLE */
+.card h1 {
+    font-size: 24px;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+/* INFO */
+.info {
+    text-align: left;
+    margin: 20px 0;
+}
+
+    .info p {
+        margin: 6px 0;
+        font-size: 14px;
+        color: #555;
+    }
+
+/* BUTTON GROUP */
+.actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+/* BUTTON */
+.btn {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+/* SUCCESS BUTTON */
+.success-btn {
+    background: #00c853;
+    color: #fff;
+}
+
+    .success-btn:hover {
+        background: #009624;
+    }
+
+/* CANCEL BUTTON */
+.cancel-btn {
+    background: #d50000;
+    color: #fff;
+}
+
+    .cancel-btn:hover {
+        background: #9b0000;
+    }

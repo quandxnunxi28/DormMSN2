@@ -4,6 +4,7 @@ using DormMS.Repository;
 
 using DormMS.Service;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -28,9 +29,10 @@ builder.Services.AddDbContext<DormMsnContext>(options =>
 builder.Services.AddScoped<IBookingbedRepository, BookingbedRepository>();
 builder.Services.AddScoped<IBookingbedService, BookingbedService>();
 builder.Services.AddScoped<IPayOSService, PayOSService>();
+builder.Services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
-
+builder.Services.AddSignalR();
 
 
 
@@ -68,7 +70,26 @@ builder.Services.AddAuthentication(options =>
             Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])
         )
     };
+    options.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            var accessToken = context.Request.Query["access_token"];
+
+            var path = context.HttpContext.Request.Path;
+
+            if (!string.IsNullOrEmpty(accessToken) &&
+                path.StartsWithSegments("/notificationHub"))
+            {
+                context.Token = accessToken;
+            }
+
+            return Task.CompletedTask;
+        }
+    };
+
 });
+
 
 var app = builder.Build();
 //app.UseDefaultFiles();   // tìm file mặc định
@@ -89,6 +110,8 @@ app.Use(async (context, next) =>
     context.Response.Headers.Add("ngrok-skip-browser-warning", "true");
     await next();
 });
+
+app.MapHub<NotificationHub>("/notificationHub");
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseStaticFiles();

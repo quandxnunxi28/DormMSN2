@@ -33,7 +33,7 @@
                 <li onclick="window.location.href='BookingBed.html'">📅 Bookings</a></li>
                 <li onclick="window.location.href='payment.html'">💳 Payment history</li>
                 <li onclick="window.location.href='my_request.html'">📩 My request</li>
-                <li onclick="window.location.href='request_admin.html'">📩 Manage request</li>
+                <li id="adminMenu" style="display: none;" onclick="window.location.href='request_admin.html'">📩 Manage request</li>
             </ul>
 
             <button id="logoutBtn" class="logout-btn">Đăng xuất</button>
@@ -115,9 +115,11 @@
 
     </div>
 
-    <script src="/js/app.js">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+    <script src="/js/app.js"></script>
+    <script src="/js/signalr.js"></script>
 
-    </script>
+
     <script>
 
         // ✅ lấy token từ URL nếu có
@@ -129,7 +131,7 @@
             window.history.replaceState({}, document.title, "/student.html");
         }
 
-        //hiển thị button quản lý   
+        //hiển thị button quản lý
         const role = getRoleFromToken();
 
         if (role === "Admin") {
@@ -140,7 +142,7 @@
         }
         function getRoleFromToken() {
             const token = localStorage.getItem("token");
-            
+
             if (!token) return null;
 
             const payload = JSON.parse(atob(token.split('.')[1]));
@@ -152,7 +154,7 @@
             if (!token) {
                 window.location.href = "/login.html";
                 return;
-            }   
+            }
 
             const res = await fetch('/api/auth/me', {
                 headers: {
@@ -181,10 +183,10 @@
                 const res = await fetch('/api/news/top-5');
                 if (!res.ok) {
                     container.innerHTML = `
-                        <div class="news-row">
-                         <h3 style="color:red;">Không thể tải dữ liệu</h3>
-                        </div>
-                        `;
+                                <div class="news-row">
+                                 <h3 style="color:red;">Không thể tải dữ liệu</h3>
+                                </div>
+                                `;
                     return;
                 }
                 const data = await res.json();
@@ -196,10 +198,10 @@
                         .toISOString()
                         .split("T")[0];
 
-                        div.innerHTML = `
-                        <h3>${item.title}</h3>
-                        <p>By ${item.createdByName || "Unknown"} ${date}</p>
-                        `;
+                    div.innerHTML = `
+                                <h3>${item.title}</h3>
+                                <p>By ${item.createdByName || "Unknown"} ${date}</p>
+                                `;
                     container.appendChild(div);
                 });
                 // thêm lại See more
@@ -209,13 +211,13 @@
                 more.innerText = "See more";
 
                 container.appendChild(more);
-            } catch (err){
+            } catch (err) {
                 container.innerHTML = `
-                    <div class="news-row">
-                    <h3 style="color:red;">Lỗi kết nối server</h3>
-                    <p>${err.message}</p>
-                    </div>
-                    `;
+                            <div class="news-row">
+                            <h3 style="color:red;">Lỗi kết nối server</h3>
+                            <p>${err.message}</p>
+                            </div>
+                            `;
                 console.error(err);
             }
         }

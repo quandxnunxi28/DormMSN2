@@ -80,6 +80,9 @@
 
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+    <script src="/js/app.js"></script>
+    <script src="/js/signalr.js"></script>
     <!-- JS -->
     <script>
         async function loadExpired() {
@@ -115,13 +118,13 @@
 
                 data.forEach(x => {
                     html += `
-                                    <tr class="expired-row">
-                                        <td>${x.userId}</td>
-                                        <td>${x.roomId}</td>
-                                        <td>${formatDate(x.allotDate)}</td>
-                                        <td class="status-expired">Hết hạn</td>
-                                    </tr>
-                                `;
+                                            <tr class="expired-row">
+                                                <td>${x.userId}</td>
+                                                <td>${x.roomId}</td>
+                                                <td>${formatDate(x.allotDate)}</td>
+                                                <td class="status-expired">Hết hạn</td>
+                                            </tr>
+                                        `;
                 });
 
                 tbody.innerHTML = html;
@@ -144,7 +147,7 @@
                 const res = await fetch("/api/bookingbed/delete-expired", {
                     method: "DELETE",
                     headers: {
-                        "Authorization": "Bearer " + token 
+                        "Authorization": "Bearer " + token
                     }
                 });
 

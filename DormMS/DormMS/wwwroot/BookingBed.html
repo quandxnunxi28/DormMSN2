@@ -74,7 +74,9 @@
             </div>
         </main>
     </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
     <script src="/js/app.js"></script>
+    <script src="/js/signalr.js"></script>
     <script>
         function getUserIdFromToken() {
             const token = localStorage.getItem("token");
@@ -121,7 +123,7 @@
                 // 🔥 GỌI 2 API SONG SONG
                 const [bookingRes, phaseData] = await Promise.all([
                     fetch(`/api/bookingbed/student/${userId}`),
-                    
+
                     loadBookingPhase(userId)
                 ]);
 
@@ -132,15 +134,15 @@
                     const data = await bookingRes.json();
 
                     const row = `
-                    <tr class="active-row">
-                        <td>${data.room?.hostel?.name || ""}</td>
-                        <td>${data.room?.roomNumber || ""}</td>
-                        <td>SVVN - 4 beds - 1.050.000</td>
-                        <td>${formatDate(data.allotDate)}</td>
-                        <td class="status accepted">${data.status}</td>
-                        <td></td>
-                    </tr>
-                `;
+                            <tr class="active-row">
+                                <td>${data.room?.hostel?.name || ""}</td>
+                                <td>${data.room?.roomNumber || ""}</td>
+                                <td>SVVN - 4 beds - 1.050.000</td>
+                                <td>${formatDate(data.allotDate)}</td>
+                                <td class="status accepted">${data.status}</td>
+                                <td></td>
+                            </tr>
+                        `;
 
                     tbody.innerHTML = row;
                 } else {
@@ -152,51 +154,50 @@
                 // ========================
                 if (!phaseData) {
                     actionDiv.innerHTML = `
-                <button class="book-now-btn" onclick="goBooking()">
-                    Đặt phòng mới
-                 </button>
-`                               
+                        <button class="book-now-btn" onclick="goBooking()">
+                            Đặt phòng mới
+                         </button>
+`
 
                 }
 
                 switch (phaseData.phase) {
                     case "NOT_OPEN":
                         actionDiv.innerHTML = `
-                        <button class="book-now-btn disabled">
-                            Chưa mở (${formatDate(phaseData.openDate)})
-                        </button>
-                       
-                    `;
-                        alert("tại sao " + (phaseData.phase));
+                                <button class="book-now-btn disabled">
+                                    Chưa mở (${formatDate(phaseData.openDate)})
+                                </button>
+                            `;
+
                         break;
 
                     case "RENEW":
                         actionDiv.innerHTML = `
-                        <button class="renew-btn" onclick="renewBooking()">
-                            Gia hạn (Giữ chỗ)
-                        </button>
-                    `;
-                        alert("tại sao " + (phaseData.phase));
+                                <button class="renew-btn" onclick="renewBooking()">
+                                    Gia hạn (Giữ chỗ)
+                                </button>
+                            `;
+
                         break;
 
                     case "NEW":
-                       
-                            actionDiv.innerHTML = `
-            <button class="book-now-btn" onclick="goBooking()">
-                Đặt phòng mới
-            </button>
-        `;
-                        
-                        alert("tại sao " + (phaseData.phase));
+
+                        actionDiv.innerHTML = `
+                    <button class="book-now-btn" onclick="goBooking()">
+                        Đặt phòng mới
+                    </button>
+                `;
+
+
                         break;
 
                     case "EXPIRED":
                         actionDiv.innerHTML = `
-                        <button class="book-now-btn disabled">
-                            Đã hết hạn
-                        </button>
-                    `;
-                        alert("tại sao " + (phaseData.phase));
+                                <button class="book-now-btn disabled">
+                                    Đã hết hạn
+                                </button>
+                            `;
+
                         break;
                 }
 
@@ -295,10 +296,10 @@
         }
         loadBookings();
         //const checkRes = await fetch(`/api/bookingbed/bookingbede/${userId}`, {
-        //    method: "POST"    
+        //    method: "POST"
         //});
 
-        //const checkData = await checkRes.json();  
+        //const checkData = await checkRes.json();
 
         //if (checkData.exists) {
         //    alert("❌ Bạn đã đặt phòng rồi! Mỗi sinh viên chỉ được đặt 1 lần.");

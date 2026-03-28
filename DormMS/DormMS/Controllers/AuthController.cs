@@ -271,6 +271,10 @@ namespace DormMS.Controllers
             if (user == null)
                 return BadRequest(new { message = "Email không tồn tại" });
 
+            if (user.Password.Equals(""))
+            {
+                return BadRequest(new { message = "Tài khoản của bạn đã sử dụng email để đăng nhập vui lòng không đăng nhập bằng mật khẩu" });
+            }
             // tạo token
             var token = Guid.NewGuid().ToString();
 

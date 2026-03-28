@@ -85,7 +85,9 @@
         </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
     <script src="/js/app.js"></script>
+    <script src="/js/signalr.js"></script>
     <script>
         function getInitials(name) {
             return name.split(' ').slice(-2).map(w => w[0]).join('').toUpperCase();
@@ -124,18 +126,18 @@
                 return;
             }
             list.innerHTML = data.map(item => `
-                                        <a class="news-card" href="news_detail.html?id=${item.newsId}">
-                                            <span class="news-badge">Thông báo</span>${item.isImportant ? '<span class="badge-important">⭐ Quan trọng</span>' : ''}
-                                            <h3>${item.title}</h3>
-                                            ${item.summary ? `<p class="summary">${item.summary}</p>` : ''}
-                                            <div class="meta">
-                                                <div class="meta-avatar">${getInitials(item.createdByName)}</div>
-                                                <div class="meta-text">
-                                                    <div class="meta-name">${item.createdByName}</div>
-                                                    <div class="meta-date">${formatDate(item.createdDate)}</div>
-                                                </div>
-                                            </div>
-                                        </a>`).join('');
+                                                <a class="news-card" href="news_detail.html?id=${item.newsId}">
+                                                    <span class="news-badge">Thông báo</span>${item.isImportant ? '<span class="badge-important">⭐ Quan trọng</span>' : ''}
+                                                    <h3>${item.title}</h3>
+                                                    ${item.summary ? `<p class="summary">${item.summary}</p>` : ''}
+                                                    <div class="meta">
+                                                        <div class="meta-avatar">${getInitials(item.createdByName)}</div>
+                                                        <div class="meta-text">
+                                                            <div class="meta-name">${item.createdByName}</div>
+                                                            <div class="meta-date">${formatDate(item.createdDate)}</div>
+                                                        </div>
+                                                    </div>
+                                                </a>`).join('');
         }
 
         function renderPagination(current, total) {

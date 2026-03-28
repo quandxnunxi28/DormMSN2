@@ -123,7 +123,9 @@
             </div>
         </div>
     </div>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+    <script src="/js/signalr.js"></script>
+    <script src="/js/app.js"></script>
     <script>
         let currentId = null;
         let currentPage = 1;
@@ -164,10 +166,10 @@
             const container = document.getElementById('complaint-list');
 
             container.innerHTML = `
-                <div class="state-box">
-                    <div class="icon">⏳</div>
-                    <p>Đang tải...</p>
-                </div>`;
+                        <div class="state-box">
+                            <div class="icon">⏳</div>
+                            <p>Đang tải...</p>
+                        </div>`;
 
             fetch(`/api/request/admin?page=${page}&status=${status}&issue=${issue}`, {
                 headers: authHeaders()
@@ -179,10 +181,10 @@
                 })
                 .catch(() => {
                     container.innerHTML = `
-                        <div class="state-box">
-                            <div class="icon">⚠️</div>
-                            <p>Lỗi tải dữ liệu</p>
-                        </div>`;
+                                <div class="state-box">
+                                    <div class="icon">⚠️</div>
+                                    <p>Lỗi tải dữ liệu</p>
+                                </div>`;
                 });
         }
 
@@ -191,31 +193,31 @@
 
             if (!res.data || res.data.length === 0) {
                 tbody.innerHTML = `
-        <tr>
-            <td colspan="7" style="text-align:center; padding:20px;">
-                📭 Không có dữ liệu
-            </td>
-        </tr>`;
+                <tr>
+                    <td colspan="7" style="text-align:center; padding:20px;">
+                        📭 Không có dữ liệu
+                    </td>
+                </tr>`;
                 return;
             }
 
             tbody.innerHTML = res.data.map(x => `
-        <tr>
-            <td>${x.issue}</td>
-            <td>${x.userName}</td>
-            <td>${x.roomNumber ?? 'N/A'}</td>
-            <td>${formatDate(x.dateFiled)}</td>
-            <td>${getStatusBadgeVN(x.status)}</td>
+                <tr>
+                    <td>${x.issue}</td>
+                    <td>${x.userName}</td>
+                    <td>${x.roomNumber ?? 'N/A'}</td>
+                    <td>${formatDate(x.dateFiled)}</td>
+                    <td>${getStatusBadgeVN(x.status)}</td>
 
-            <td>
-                <button onclick="openDetail(${x.complaintId})">👁</button>
+                    <td>
+                        <button onclick="openDetail(${x.complaintId})">👁</button>
 
-                <button onclick="updateStatus(${x.complaintId}, 'Accepted')">✔</button>
+                        <button onclick="updateStatus(${x.complaintId}, 'Accepted')">✔</button>
 
-                <button onclick="updateStatus(${x.complaintId}, 'Rejected')">❌</button>
-            </td>
-        </tr>
-    `).join('');
+                        <button onclick="updateStatus(${x.complaintId}, 'Rejected')">❌</button>
+                    </td>
+                </tr>
+            `).join('');
         }
 
         // ===== DETAIL =====
@@ -226,14 +228,14 @@
                 .then(res => res.json())
                 .then(data => {
                     document.getElementById('detail-content').innerHTML = `
-                            <div class="detail-row"><b>Loại:</b> ${data.issue}</div>
-                            <div class="detail-row"><b>Người gửi:</b> ${data.userName}</div>
-                            <div class="detail-row"><b>Phòng:</b> ${data.roomNumber ?? 'N/A'}</div>
-                            <div class="detail-row"><b>Ngày gửi:</b> ${formatDate(data.dateFiled)}</div>
-                            <div class="detail-row"><b>Trạng thái:</b> ${getStatusBadgeVN(data.status)}</div>
-                            <div class="detail-row"><b>Mô tả:</b> ${(data.description).replace(/\n/g, '<br>')}</div>
-                            
-                            `;
+                                    <div class="detail-row"><b>Loại:</b> ${data.issue}</div>
+                                    <div class="detail-row"><b>Người gửi:</b> ${data.userName}</div>
+                                    <div class="detail-row"><b>Phòng:</b> ${data.roomNumber ?? 'N/A'}</div>
+                                    <div class="detail-row"><b>Ngày gửi:</b> ${formatDate(data.dateFiled)}</div>
+                                    <div class="detail-row"><b>Trạng thái:</b> ${getStatusBadgeVN(data.status)}</div>
+                                    <div class="detail-row"><b>Mô tả:</b> ${(data.description).replace(/\n/g, '<br>')}</div>
+
+                                    `;
                     currentId = data.complaintId;
                     document.getElementById('detailModal').classList.add('open');
                 });
@@ -306,5 +308,5 @@
             if (e.target === this) closeModal();
         });
     </script>
-    </body>
+</body>
 </html>

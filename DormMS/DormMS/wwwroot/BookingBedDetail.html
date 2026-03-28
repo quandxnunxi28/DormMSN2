@@ -62,6 +62,7 @@
                                 <th>Capacity</th>
                                 <th>Occupied</th>
                                 <th>Available</th>
+                                <th>Price</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -74,48 +75,53 @@
         </main>
 
     </div>
-    <script>async function loadAvailableRooms() {
-    const tbody = document.getElementById("roomsBody");
-    tbody.innerHTML = "<tr><td colspan='7'>Loading...</td></tr>";
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+    <script src="/js/app.js"></script>
+    <script src="/js/signalr.js"></script>
+    <script>
+        async function loadAvailableRooms() {
+            const tbody = document.getElementById("roomsBody");
+            tbody.innerHTML = "<tr><td colspan='7'>Loading...</td></tr>";
 
-    try {
-        const res = await fetch("/api/bookingbed/rooms/available");
-        if (!res.ok) {
-            tbody.innerHTML = "<tr><td colspan='7'>Hiện không còn phòng trống.</td></tr>";
-            return;
+            try {
+                const res = await fetch("/api/bookingbed/rooms/available");
+                if (!res.ok) {
+                    tbody.innerHTML = "<tr><td colspan='7'>Hiện không còn phòng trống.</td></tr>";
+                    return;
+                }
+
+                const rooms = await res.json();
+
+                if (rooms.length === 0) {
+                    tbody.innerHTML = "<tr><td colspan='7'>Hiện không còn phòng trống.</td></tr>";
+                    return;
+                }
+
+                let html = "";
+                rooms.forEach(r => {
+                    const available = (r.capacity ?? 0) - (r.occupied ?? 0);
+                    html += `
+                        <tr>
+                            <td>${r.hostelId}</td>
+                            <td>${r.roomNumber}</td>
+                            <td>${r.type}</td>
+                            <td>${r.capacity}</td>
+                            <td>${r.occupied}</td>
+                            <td>${available}</td>
+                            <td>2000VNĐ</td>
+                            <td>
+                                <button onclick="chooseRoom(${r.roomId}, '${r.roomNumber}', ${available})">Chọn phòng</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                tbody.innerHTML = html;
+            } catch (err) {
+                console.error(err);
+                tbody.innerHTML = "<tr><td colspan='7'>Lỗi khi tải dữ liệu phòng.</td></tr>";
+            }
         }
-
-        const rooms = await res.json();
-
-        if (rooms.length === 0) {
-            tbody.innerHTML = "<tr><td colspan='7'>Hiện không còn phòng trống.</td></tr>";
-            return;
-        }
-
-        let html = "";
-        rooms.forEach(r => {
-            const available = (r.capacity ?? 0) - (r.occupied ?? 0);
-            html += `
-                <tr>
-                    <td>${r.hostelId}</td>
-                    <td>${r.roomNumber}</td>
-                    <td>${r.type}</td>
-                    <td>${r.capacity}</td>
-                    <td>${r.occupied}</td>
-                    <td>${available}</td>
-                    <td>
-                        <button onclick="chooseRoom(${r.roomId}, '${r.roomNumber}', ${available})">Chọn phòng</button>
-                    </td>
-                </tr>
-            `;
-        });
-
-        tbody.innerHTML = html;
-    } catch (err) {
-        console.error(err);
-        tbody.innerHTML = "<tr><td colspan='7'>Lỗi khi tải dữ liệu phòng.</td></tr>";
-    }
-}
         function getUserIdFromToken() {
             const token = localStorage.getItem("token");
             console.log(token);
@@ -153,12 +159,11 @@
                 return;
             }
 
-             // giả lập
-            const price = prompt(`Nhập giá phòng cho ${roomNumber}:`, "2000");
+            // giả lập
 
-            if (!price) return;
 
             try {
+                const totalAmount = 2000;
                 const res = await fetch("/api/bookingbed/create", {
                     method: "POST",
                     headers: {
@@ -167,16 +172,16 @@
                     body: JSON.stringify({
                         userId: parseInt(userId),
                         roomId: roomId,
-                        totalAmount: 2000
+                        totalAmount: totalAmount
                     })
                 });
                 if (userId == null) {
                     alert("giả lập ủeId =1 đang không được ");
                     return;
                 }
-                if (price == null) {
-                    alert("giả lập price =1000000 đang không được ");
-                    return;
+                if (totalAmount != null) {
+                    alert("bạn có chắc muốn chọn phòng này ");
+
                 }
                 if (!res.ok) {
                     const text = await res.text();
@@ -191,31 +196,31 @@
 
             } catch (err) {
                 console.error(err);
-                alert("Lỗi khi gọi API"+ err);
+                alert("Lỗi khi gọi API" + err);
             }
-        }   
+        }
         function showPayment(data) {
             const html = `
-        <div style="margin-top:20px; padding:20px; border:1px solid #ccc;">
-            <h2>Thanh toán</h2>
-            <p><b>Booking ID:</b> ${data.bookingId}</p>
+                <div style="margin-top:20px; padding:20px; border:1px solid #ccc;">
+                    <h2>Thanh toán</h2>
+                    <p><b>Booking ID:</b> ${data.bookingId}</p>
 
-            <p>
-                <a href="${data.paymentUrl}" target="_blank">
-                    👉 Nhấn vào đây để thanh toán
-                </a>
-            </p>
+                    <p>
+                        <a href="${data.paymentUrl}" target="_blank">
+                            👉 Nhấn vào đây để thanh toán
+                        </a>
+                    </p>
 
-            <div>
-                <p>Hoặc quét QR:</p>
-                <img src="${data.qrCode}" width="200"/>
-            </div>
-        </div>
-    `;
+                    <div>
+                        <p>Hoặc quét QR:</p>
+                        <img src="${data.qrCode}" width="200"/>
+                    </div>
+                </div>
+            `;
 
             document.querySelector(".booking-detail").innerHTML += html;
         }
 
-loadAvailableRooms();</script>
+        loadAvailableRooms();</script>
 </body>
 </html>

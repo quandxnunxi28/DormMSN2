@@ -1,4 +1,9 @@
-﻿const toggleBtn = document.getElementById("toggleBtn");
+﻿ <script>
+     alert("JS inline chạy OK");
+     console.log("🚀 app.js loaded");
+     alert(" app.js loaded kakakaka");
+</script>
+const toggleBtn = document.getElementById("toggleBtn");
 const sidebar = document.getElementById("sidebar");
 const content = document.getElementById("content");
 
@@ -53,7 +58,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // 2. Giải mã và kiểm tra role
     if (token) {
         const decodedToken = parseJwt(token);
-        console.log("Token lấy được:", token ? "Có token" : "Không có"); // Cắm cờ kiểm tra số 1
+        
         if (decodedToken) {
             // Đọc Claim Role từ C# gen ra
             const role = decodedToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
@@ -101,3 +106,32 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 });
+
+
+
+// ==========================
+// SIGNALR GLOBAL
+// ==========================
+
+// Tạo kết nối tới server
+
+
+// ==========================
+// UI Toast
+// ==========================
+function showToast(msg) {
+    const div = document.createElement("div");
+    div.innerText = msg;
+
+    div.style.position = "fixed";
+    div.style.top = "20px";
+    div.style.right = "20px";
+    div.style.background = "#4caf50";
+    div.style.color = "white";
+    div.style.padding = "10px";
+    div.style.borderRadius = "5px";
+
+    document.body.appendChild(div);
+
+    setTimeout(() => div.remove(), 3000);
+}
